@@ -4,6 +4,7 @@
 
 根据系统需求，我们抽取了三个核心业务实体：**用户 (Users)**、**互助委托 (Tasks)** 和 **积分流水 (Points_Logs)**。
 系统的核心业务逻辑围绕积分流转展开，必须保证积分变更的数据一致性与可追溯性。
+<img width="676" height="896" alt="屏幕截图 2026-03-24 191654" src="https://github.com/user-attachments/assets/731acccc-d0d7-4808-91ef-ddc31d6d7220" />
 
 
 ##  2. 核心数据表设计
