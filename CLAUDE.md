@@ -6,12 +6,12 @@
 - 部署: Docker Compose (目标环境: Ubuntu 18.04)
 
 ## 目录结构
-- `frontend/src/components/` - 可复用UI组件
-- `frontend/src/views/` - 页面组件 (学生端/管理端)
-- `frontend/src/api/` - Axios 接口统一调用
-- `backend/src/main/java/com/help/controller/` - RESTful API 控制层
-- `backend/src/main/java/com/help/service/` - 核心业务逻辑 (积分、审核)
-- `docs/` - 架构与数据库设计文档
+- frontend/src/components/ - 可复用UI组件
+- frontend/src/views/ - 页面组件 (学生端/管理端)
+- frontend/src/api/ - Axios 接口统一调用
+- backend/src/main/java/com/help/controller/ - RESTful API 控制层
+- backend/src/main/java/com/help/service/ - 核心业务逻辑 (积分、审核)
+- docs/ - 架构与数据库设计文档
 
 ## 代码规范
 - 前端使用 Composition API (setup 语法糖) + TypeScript 强类型。

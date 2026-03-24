@@ -3,13 +3,35 @@
 本模块为项目前端展示层，负责用户交互、页面渲染、接口请求与数据可视化，覆盖用户登录、核心业务页面、数据管理等全流程功能。
 
 ## 二、技术选型
-- 核心框架：Vue 3.4 + React
-- 路由管理：Vue Router 4
-- UI组件库：Element Plus
+- 前端构建工具：Vite
+- JavaScript 超集：TypeScript
+- CSS 处理工具:PostCSS
+- 页面基础标记语言:HTML5
+- 前端包管理工具:npm
 ## 三 目录结构
-  还未创建.
+  * src/：前端源码核心目录，所有业务代码、组件、逻辑均集中在此
+    * assets/：静态资源目录，存放图片、字体文件、全局样式表等
+    * components/：通用组件目录，封装可复用的 UI 组件（如按钮、表单、弹窗、导航栏）
+    * views/：页面视图目录，对应不同业务场景的完整页面（如首页、个人中心、任务列表）
+    * utils/：工具类目录，封装通用方法（如接口请求拦截、日期处理、数据格式化、鉴权逻辑）
+    * api/：接口请求目录，统一管理后端 API 请求（封装接口地址、请求方法、参数处理）
+    * hooks/：自定义钩子目录（适配 Vue3/React），封装可复用的业务逻辑钩子（如数据加载、状态监听）
+    * router/：路由配置目录，管理页面路由跳转、路由守卫（如登录拦截、权限控制）
+    * store/：状态管理目录（如 Pinia/Vuex/Redux），管理全局共享状态（如用户信息、全局配置）
+    * types/：TypeScript 类型定义目录，存放接口、类型别名（如接口返回类型、组件 Props 类型）
+    * App.vue/App.tsx：根组件，所有页面的容器组件，统一布局与全局样式挂载
+    * main.ts：项目入口文件，创建应用实例、挂载 DOM 节点、引入全局资源（样式、插件）
+    * public/：公共静态资源目录（无需编译处理），存放 favicon.ico、第三方 CDN 资源、静态 HTML 等
+    * vite.config.ts：Vite 核心配置文件，配置开发服务器、构建规则、插件、接口代理等
+    * postcss.config.mjs：PostCSS 配置文件，配置 CSS 自动前缀、压缩、兼容新特性等插件
+    * package.json：项目核心配置文件，管理依赖版本、定义开发 / 打包 / 预览等脚本命令
+    * package-lock.json/yarn.lock：依赖版本锁定文件，保证不同环境依赖安装一致性
+    * tsconfig.json：TypeScript 配置文件，指定编译规则、类型检查范围、模块解析方式等
+    *  index.html：Vite 项目入口 HTML 文件，定义应用挂载节点、引入入口脚本
+    * eslintrc.js：ESLint 配置文件，规范代码语法、格式与编码风格
+    * prettierrc：Prettier 配置文件，统一代码格式化规则（如缩进、换行、引号）
+    * dist/：构建打包输出目录，执行 build 命令后生成，存放可直接部署的静态资源文件
 ## 四、运行方式
-1.  环境要求：Node.js 18+ 版本
-2.  安装依赖：`npm install`
-3.  本地启动：`npm run dev`
-4.  生产构建：`npm run build`
+1.  安装依赖：`npm install`
+2.  本地启动：`npm run dev`
+3.  生产构建：`npm run build`
