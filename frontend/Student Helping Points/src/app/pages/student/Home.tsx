@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -14,6 +14,9 @@ import {
 } from "../../components/ui/select";
 import { Search, Clock, Coins, User, TrendingUp, BookOpen, Code, Palette, MessageSquare } from "lucide-react";
 import { motion } from "motion/react";
+
+// ✅ 引入我们之前封装好的 API 接口
+import { tasksApi } from "../../api/tasks";
 
 // 模拟任务数据
 const mockTasks = [
@@ -76,7 +79,7 @@ const mockTasks = [
     id: '6',
     title: '活动摄影跟拍',
     description: '社团活动需要摄影师跟拍记录，时间大约2小时',
-    category: '活���协助',
+    category: '活动协助',
     points: 60,
     deadline: '2026-03-22 14:00',
     publisher: { name: '赵敏', avatar: 'Z' },
@@ -104,6 +107,24 @@ export function StudentHome() {
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('latest');
+
+  // ✅ 在组件加载时，自动调用后端接口获取数据
+  useEffect(() => {
+    const fetchTasksFromApi = async () => {
+      try {
+        console.log('🚀 [前端联调] 开始调用获取任务列表 API...');
+        // 调用我们封装好的 API
+        const res = await tasksApi.getTasks();
+        
+        // 打印获取到的 Mock 数据，用来做作业截图证明
+        console.log('✅ [前端联调] API 调用成功，获取到的数据：', res);
+      } catch (error) {
+        console.error('❌ [前端联调] API 调用失败：', error);
+      }
+    };
+
+    fetchTasksFromApi();
+  }, []); // 空数组代表只在页面首次打开时执行一次
 
   const filteredTasks = mockTasks.filter(task => {
     const matchCategory = selectedCategory === '全部' || task.category === selectedCategory;
