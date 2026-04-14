@@ -26,7 +26,7 @@
 
 ## PR 链接
 
-- PR #X: https://github.com/xxx/xxx/pull/X
+- PR #X: https://github.com/xxx/xxx/pull/X](https://github.com/AASSKK99881/Help-1/pull/14)
 
 ## 遇到的问题和解决
 
