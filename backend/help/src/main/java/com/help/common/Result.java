@@ -9,7 +9,7 @@ public class Result<T> {
 
     public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>();
-        result.setCode(200);
+        result.setCode(0); // 必须为 0
         result.setMessage("success");
         result.setData(data);
         return result;
