@@ -37,13 +37,13 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
-    <build>
+d>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+
+                <buil           <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
         </plugins>
     </build>
 </project>
