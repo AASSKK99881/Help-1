@@ -14,6 +14,9 @@ import { Home, ListTodo, PlusCircle, User, Bell, LogOut } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { useEffect } from "react";
 
+// ✨ 新增：引入我们刚刚写好的 AI 组件
+import { AIPageSummary } from "../components/AIPageSummary";
+
 export function StudentLayout() {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -36,8 +39,19 @@ export function StudentLayout() {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // ✨ 新增：将路由路径映射为中文页面名称，传给 AI 模型使用
+  const getPageName = (pathname: string) => {
+    if (pathname.includes('/my-tasks')) return '我的委托';
+    if (pathname.includes('/create-task')) return '发布需求';
+    if (pathname.includes('/messages')) return '消息通知';
+    if (pathname.includes('/profile')) return '个人中心';
+    if (pathname.includes('/points-history')) return '积分明细';
+    if (pathname.includes('/task')) return '任务详情';
+    return '首页大厅';
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
       {/* 顶部导航栏 */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -128,6 +142,9 @@ export function StudentLayout() {
       <main className="max-w-7xl mx-auto px-6 py-6">
         <Outlet />
       </main>
+
+      {/* ✨ 新增：把 AI 助手挂载到全局页面的最外层（因为它带有 fixed 定位） */}
+      <AIPageSummary pageName={getPageName(location.pathname)} />
     </div>
   );
 }
