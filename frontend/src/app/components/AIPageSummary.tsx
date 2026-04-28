@@ -31,7 +31,7 @@ export function AIPageSummary({ pageName }: AIPageSummaryProps) {
         const res = await aiApi.getPageSummary({ pageContext: pageName });
         setSummary(res.summary);
       } catch (error) {
-        setSummary('抱歉，获取页面概括失败，请检查后端或 Ollama 模型是否正常运行。');
+        setSummary('抱歉，获取页面概括失败，请检查后端或 Ollama 模型是否正常运行(后端api调试接入中)。');
       } finally {
         setIsLoading(false);
       }
