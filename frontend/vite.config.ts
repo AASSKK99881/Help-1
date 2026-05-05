@@ -6,13 +6,11 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [
-
     react(),
     tailwindcss(),
   ],
   resolve: {
     alias: {
-
       '@': path.resolve(__dirname, './src'),
     },
   },
@@ -28,8 +26,18 @@ export default defineConfig({
     coverage: {
       provider: 'v8', // 覆盖率提供者
       reporter: ['text', 'lcov'], // 终端输出文本，lcov 用于 Codecov 上传
-      include: ['src/app/components/**/*.{ts,tsx}', 'src/app/pages/**/*.{ts,tsx}'], // 指定计算覆盖率的核心组件/页面目录
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/vite-env.d.ts'], // 排除不必要的文件
+      include: [
+        'src/app/components/**/*.{ts,tsx}', 
+        'src/app/pages/**/*.{ts,tsx}'
+      ], // 指定计算覆盖率的核心组件/页面目录
+      exclude: [
+        'src/**/*.test.{ts,tsx}', 
+        'src/main.tsx', 
+        'src/vite-env.d.ts',
+        'src/app/routes.tsx',              // 排除路由配置文件
+        'src/app/components/ui/**',        // 排除所有的基础 UI 组件 (数量庞大，最拉低覆盖率的部分)
+        'src/app/components/figma/**'      // 排除 Figma 自动生成的组件
+      ], // 排除不必要的文件，防止拉低覆盖率
     },
   },
 })
