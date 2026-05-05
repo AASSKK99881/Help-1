@@ -24,7 +24,12 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
       include: [
         'src/app/components/TaskCard.tsx',
-        'src/app/pages/student/Login.tsx'
+        'src/app/pages/student/Login.tsx',
+        'src/app/components/ui/button.tsx',
+        'src/app/components/ui/input.tsx',
+        'src/app/components/ui/label.tsx',
+        'src/app/components/ui/badge.tsx',
+        'src/app/components/ui/utils.ts'
       ]
     },
   },
