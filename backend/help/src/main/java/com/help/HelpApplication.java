@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.help.mapper") // 扫描 Mapper 接口
+/*@MapperScan("com.help.mapper") // 扫描 Mapper 接口*/
 public class HelpApplication {
     public static void main(String[] args) {
         // 已修复：将 . java 改为了 .class
