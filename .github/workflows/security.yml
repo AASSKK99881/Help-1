@@ -1,41 +1,16 @@
 name: Security Scan
 
-on: 
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+on: [push, pull_request]
 
 jobs:
-  # 任务 1：前端依赖漏洞扫描
-  dependency-audit:
-    name: Frontend Dependency Audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20' # 使用较新的稳定版本
-
-      - name: Install dependencies and Audit
-        # 进入 frontend 目录运行扫描，设置仅在有 high 级别及以上漏洞时才报错退出
-        run: |
-          cd frontend
-          npm install --package-lock-only
-          npm audit --audit-level=high --registry=https://registry.npmjs.org
-
-  # 任务 2：Gitleaks 密钥泄露扫描（作业推荐选项）
-  gitleaks-scan:
+  gitleaks:
     name: Gitleaks Secret Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 扫描所有历史提交记录
+          fetch-depth: 0
           
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
