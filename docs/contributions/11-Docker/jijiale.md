@@ -18,7 +18,7 @@
 - 选择了选项A/B: （由后端同学负责）
 
 ## PR链接
-- PR #X: https://github.com/xxx/xxx/pull/X
+- PR #X: [https://github.com/xxx/xxx/pull/X](https://github.com/AASSKK99881/Help-1/pull/51)
 
 ## 遇到的问题和解决
 1. 问题: 前端打包后需要使用 Nginx 运行静态文件，但作业要求“非 root 用户运行”，而常规 Nginx 镜像默认需要 root 权限来绑定 80 端口，导致启动失败。
