@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      target: builder # 停留在 Node 构建阶段以便运行开发服务器
+    # 覆盖默认启动命令，开启 Vite 热重载并监听所有网络接口
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # 匿名卷，防止本地覆盖容器内的依赖
+    environment:
+      - VITE_API_URL=http://localhost:8080
+
+  backend:
+    build: ./backend/help
+    ports:
+      - "8080:8080"
+    environment:
+      # 配置 Spring Boot 连接到 postgres 容器
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/myapp
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=dev123
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: dev123
+      POSTGRES_DB: myapp
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
