@@ -1,5 +1,6 @@
 package com.help.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.entity.PointsLog;
 import com.help.entity.Task;
 import com.help.entity.User;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
     @Autowired
     private TaskMapper taskMapper;
