@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react"; // 1. 确保引入了 useEffect
+import { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router";
 import { useAuth } from "../../contexts/AuthContext";
+import { authApi } from "../../api/auth"; // 引入注册 API
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -19,17 +20,19 @@ export function StudentLogin() {
     confirmPassword: '',
     agreed: false
   });
+  
+  // 用于切换 Tabs
+  const [activeTab, setActiveTab] = useState("login");
+  
   const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
-  // 2. 修改点：使用 useEffect 处理重定向逻辑
   useEffect(() => {
     if (isAuthenticated && user?.role === 'student') {
       navigate('/', { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 
-  // 3. 修改点：如果已登录，直接返回 null，不执行后续渲染逻辑，避免报错
   if (isAuthenticated && user?.role === 'student') {
     return null;
   }
@@ -39,10 +42,9 @@ export function StudentLogin() {
     try {
       await login(loginForm.email, loginForm.password, 'student');
       toast.success('登录成功！');
-      // 登录回调里的 navigate 是安全的，不需要改
       navigate('/');
     } catch (error) {
-      toast.error('登录失败，请检查邮箱或密码');
+      toast.error('登录失败，请检查账号或密码');
     }
   };
 
@@ -52,8 +54,20 @@ export function StudentLogin() {
       toast.error('两次输入的密码不一致');
       return;
     }
-    // 注册逻辑...
-    toast.success('注册成功，请登录');
+    
+    // 🎯 核心修改：调用真实的后端注册 API
+    try {
+      await authApi.register({
+        name: registerForm.name,
+        studentId: registerForm.studentId,
+        password: registerForm.password,
+        contactInfo: registerForm.email
+      });
+      toast.success('注册成功，请切换到登录页进行登录');
+      setActiveTab("login"); // 注册成功后自动切回登录页面
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || '注册失败，该学号/邮箱可能已被注册');
+    }
   };
 
   return (
@@ -80,7 +94,7 @@ export function StudentLogin() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 p-1">
               <TabsTrigger value="login">登录</TabsTrigger>
               <TabsTrigger value="register">注册</TabsTrigger>
@@ -89,11 +103,10 @@ export function StudentLogin() {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">邮箱地址</Label>
+                  <Label htmlFor="email">学号/邮箱地址</Label>
                   <Input 
                     id="email" 
-                    type="email" 
-                    placeholder="name@university.edu.cn" 
+                    placeholder="请输入你的学号或邮箱" 
                     required 
                     value={loginForm.email}
                     onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
@@ -125,20 +138,52 @@ export function StudentLogin() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">姓名</Label>
-                    <Input id="name" required />
+                    <Input 
+                      id="name" 
+                      required 
+                      value={registerForm.name}
+                      onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="studentId">学号</Label>
-                    <Input id="studentId" required />
+                    <Input 
+                      id="studentId" 
+                      required 
+                      value={registerForm.studentId}
+                      onChange={(e) => setRegisterForm({ ...registerForm, studentId: e.target.value })}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="reg-email">邮箱地址</Label>
-                  <Input id="reg-email" type="email" required />
+                  <Input 
+                    id="reg-email" 
+                    type="email" 
+                    required 
+                    value={registerForm.email}
+                    onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="reg-password">设置密码</Label>
-                  <Input id="reg-password" type="password" required />
+                  <Input 
+                    id="reg-password" 
+                    type="password" 
+                    required 
+                    value={registerForm.password}
+                    onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">确认密码</Label>
+                  <Input 
+                    id="confirm-password" 
+                    type="password" 
+                    required 
+                    value={registerForm.confirmPassword}
+                    onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
+                  />
                 </div>
                 <div className="flex items-start space-x-2 mt-4">
                   <Checkbox 

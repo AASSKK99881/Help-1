@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: '/api', 
+  // 🎯 核心修改：优先读取环境变量中的后端地址，如果没有则默认请求本地 8080
+  baseURL: 'http://localhost:8080/api', 
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

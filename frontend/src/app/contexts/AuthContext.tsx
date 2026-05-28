@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authApi } from '../api/auth'; // 引入真实的 API
 
 interface User {
   id: string;
@@ -33,33 +34,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string, role: 'student' | 'admin') => {
-    // 模拟登录逻辑
-    const mockUser: User = role === 'student' 
-      ? {
-          id: '1',
-          name: '张三',
-          studentId: '2021001',
-          role: 'student',
-          points: 500,
-          email: email,
-          phone: '138****5678'
+    // 🎯 核心修改：调用真实的后端 API
+    try {
+      const response = await authApi.login({ studentId: email, password: password });
+      
+      // Axios 拦截器已经剥离了 response.data，这里 response 直接是后端返回的 Result 对象
+      if (response && response.data && response.data.user) {
+        const realUser = response.data.user;
+        const token = response.data.token;
+
+        // 保存 Token 到 localStorage 供后续请求使用
+        if (token) {
+          localStorage.setItem('token', token);
         }
-      : {
-          id: 'admin1',
-          name: '李老师',
-          teacherId: 'T2021001',
-          role: 'admin',
-          points: 0,
+
+        // 把后端返回的 User 字段适配为前端需要的结构
+        const loggedUser: User = {
+          id: realUser.id?.toString() || '1',
+          name: realUser.username || '未命名用户', // 读取数据库里的真实用户名
+          studentId: realUser.username,
+          role: realUser.role === 1 || realUser.role === 'ADMIN' ? 'admin' : 'student',
+          points: realUser.points || 0,
           email: email
         };
 
-    setUser(mockUser);
-    localStorage.setItem('user', JSON.stringify(mockUser));
+        setUser(loggedUser);
+        localStorage.setItem('user', JSON.stringify(loggedUser));
+      } else {
+        throw new Error('登录失败，返回数据格式错误');
+      }
+    } catch (error) {
+      console.error("登录失败:", error);
+      throw error;
+    }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token'); // 退出时记得清除 token
   };
 
   return (

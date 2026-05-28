@@ -1,47 +1,48 @@
 import apiClient from './client';
 
-// 定义任务类型
+// 1. 严格对齐后端 Entity (Task.java) 的字段
 export interface Task {
-  id: string;
+  id: string | number;
+  publisherId: string | number; // 对应后端 publisherId
+  acceptorId?: string | number; 
+  category?: string;
   title: string;
   description: string;
-  points: number;
-  status: 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-  creatorId: string;
+  pointsReward: number;         // 对应后端 pointsReward
+  status: number;               // 对应后端 0待审, 1待接, 2进行中, 3完成
+  deadline?: string;
   createdAt: string;
 }
 
-// 分页查询参数类型
 export interface TaskQueryParams {
   page?: number;
   size?: number;
-  status?: string;
+  status?: string | number;
   keyword?: string;
 }
 
 export const tasksApi = {
-  // 获取任务列表（包含分页和筛选，对标作业"数据查询"要求）
+  // 获取任务列表（期望返回 { total: 数量, list: 数组 }）
   getTasks: (params?: TaskQueryParams) => {
     return apiClient.get<{ code: number; data: { total: number; list: Task[] } }>('/tasks', { params });
   },
 
-  // 获取单个任务详情
   getTaskById: (id: string) => {
     return apiClient.get<{ code: number; data: Task }>(`/tasks/${id}`);
   },
 
-  // 发布新委托任务（对标作业"核心业务 CRUD"要求）
-  createTask: (data: { title: string; description: string; points: number }) => {
+  // 2. 发布任务：发送时必须使用 pointsReward 字段
+  createTask: (data: { title: string; description: string; pointsReward: number }) => {
     return apiClient.post<{ code: number; data: Task }>('/tasks', data);
   },
 
-  // 接取任务
-  acceptTask: (id: string) => {
-    return apiClient.post<{ code: number; data: any }>(`/tasks/${id}/accept`);
+  // 3. 接取任务：补充后端 @RequestBody 需要的 studentId
+  acceptTask: (id: string | number, studentId: number) => {
+    return apiClient.post<{ code: number; data: any }>(`/tasks/${id}/accept`, { studentId: studentId });
   },
   
-  // 确认任务完成
-  completeTask: (id: string) => {
-    return apiClient.put<{ code: number; data: any }>(`/tasks/${id}/complete`);
+  // 4. 确认完成：修改为 POST 方法以匹配后端的 @PostMapping
+  completeTask: (id: string | number) => {
+    return apiClient.post<{ code: number; data: any }>(`/tasks/${id}/complete`);
   }
 };
