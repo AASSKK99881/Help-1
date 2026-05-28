@@ -1,0 +1,68 @@
+services:
+  # ==========================================
+  # 1. 前端服务 (Vue + Nginx)
+  # ==========================================
+  frontend:
+    build:
+      # 使用 ../frontend 精准定位到你上一级的 frontend 文件夹
+      context: C:/Users/21969/Desktop/Help-1/frontend
+      dockerfile: Dockerfile
+    container_name: help-frontend
+    ports:
+      - "5173:80"    # 宿主机用 5173 访问，映射到 Nginx 容器内的 80 端口
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    depends_on:
+      - backend      # 确保后端启动后再启动前端
+    networks:
+      - app-network
+
+  # ==========================================
+  # 2. 后端服务 (Spring Boot)
+  # ==========================================
+  backend:
+    build:
+      context: ./help   # 指向 backend/help 目录
+      dockerfile: Dockerfile
+    container_name: help-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/help_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${DB_ROOT_PASSWORD}
+      - AI_API_KEY=${AI_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy  # 必须等数据库完全健康(Healthy)才启动后端
+    networks:
+      - app-network
+
+  # ==========================================
+  # 3. 数据库服务 (MySQL)
+  # ==========================================
+  db:
+    image: mysql:8.0
+    container_name: help-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: help_db
+    volumes:
+      - mysql_dev_data:/var/lib/mysql  # 数据持久化，关机也不丢数据
+    healthcheck:
+      # 健康检查机制：不断 ping 数据库，直到连通为止
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+# 声明数据卷和网络
+volumes:
+  mysql_dev_data:
+networks:
+  app-network:
+    driver: bridge
