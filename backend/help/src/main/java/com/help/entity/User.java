@@ -7,11 +7,17 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("users")
+@TableName("user") // ⚠️ 必须改为单数 user，与数据库真实表名保持一致
 public class User {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private String username;
+
+    private String username; // 用于存学号 (studentId)
+
+    // 👇 新增：用于接收前端传来的真实姓名和邮箱
+    private String name;
+    private String email;
+
     private String password;
     private Integer role;
     private Integer points;

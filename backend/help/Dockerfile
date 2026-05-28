@@ -1,12 +1,26 @@
-# 阶段 1: 构建
-FROM maven:3.9.6-eclipse-temurin-17 AS build
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
+# === 阶段 1: 编译打包阶段 ===
+# 🎯 在原来的镜像前面加上 docker.1panel.live/ 强制走国内代理节点
+FROM docker.1panel.live/library/eclipse-temurin:17-jdk-alpine AS builder
+WORKDIR /build
 
-# 阶段 2: 运行
-FROM eclipse-temurin:17-jre
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
+
+RUN ./mvnw dependency:go-offline -B
+COPY src ./src
+RUN ./mvnw package -DskipTests
+
+# === 阶段 2: 最终运行阶段 ===
+# 🎯 同样加上加速前缀
+FROM docker.1panel.live/library/eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+RUN addgroup -S spring && adduser -S spring -G spring
+COPY --from=builder /build/target/*.jar app.jar
+RUN chown -R spring:spring /app
+
+USER spring
 EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
