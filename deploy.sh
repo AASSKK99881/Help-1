@@ -1,18 +1,23 @@
 #!/bin/bash
 set -e
 
-echo "Starting deployment..."
+echo "Starting deployment to Alibaba Cloud ECS..."
 
-# Pull latest images (if using GHCR)
-# docker compose -f compose.prod.yaml pull
-
-# Rebuild and start
-docker compose -f compose.prod.yaml up -d --build
+# Rebuild and start all services
+docker compose -f compose.server.yaml up -d --build
 
 echo "Waiting for services to be ready..."
-sleep 10
+sleep 15
 
 # Show service status
-docker compose -f compose.prod.yaml ps
+docker compose -f compose.server.yaml ps
 
-echo "Deployment complete"
+# Quick health check
+echo ""
+echo "Health check:"
+curl -s http://localhost:8080/health || echo "Backend not ready yet"
+
+echo ""
+echo "Deployment complete!"
+echo "Frontend: http://$(curl -s ifconfig.me)"
+echo "Backend:  http://$(curl -s ifconfig.me):8080/health"
