@@ -15,22 +15,11 @@
 ### 2. 部署配置
 - [✔] **compose.server.yaml**: 编写了服务器专用 Compose 文件，前端映射 80 端口、后端 8080 端口、MySQL 3306 端口，配置健康检查和自动重启
 - [✔] **环境变量配置**: 通过 `.env` 文件管理 DB_ROOT_PASSWORD 和 AI_API_KEY，与代码分离，不提交到 Git
-- [✔] **前后端 Dockerfile**: 前端多阶段构建（Node 构建 + Nginx 部署，非 root 用户运行）；后端 Maven 阿里云镜像加速 + Temurin JRE 运行
-- [✔] **nginx.conf**: 非 root 用户运行，pid 写入 /tmp/，适配 Docker 容器环境
+- [×] **前后端 Dockerfile**: 前端多阶段构建（Node 构建 + Nginx 部署，非 root 用户运行）；后端 Maven 阿里云镜像加速 + Temurin JRE 运行
+- [×] **nginx.conf**: 非 root 用户运行，pid 写入 /tmp/，适配 Docker 容器环境
 
 ### 3. 部署文档
 - [✔] **deployment.md**: 编写了完整的阿里云 ECS 部署说明，包含服务器选型、Docker 安装、部署步骤、安全组配置、健康验证和常见问题排查
-
----
-
-## PR 链接
-- PR #X: https://github.com/AASSKK99881/Help-1/pull/X (根据实际 PR 填写)
-
-## 在线地址
-- 前端: http://<ECS公网IP> (待部署后填写)
-- 后端: http://<ECS公网IP>:8080/health (待部署后填写)
-
----
 
 ## 遇到的问题和解决
 1. **问题**: 阿里云安全组默认不开放 80 和 8080 端口，部署后外网无法访问。
