@@ -16,6 +16,7 @@ public class Task {
     private String category;
     private String title;
     private String description;
+    private Integer isAnonymous;
     private Integer pointsReward;
     private Integer status; // 0待审, 1待接, 2进行中, 3完成
     private LocalDateTime deadline;

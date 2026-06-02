@@ -1,20 +1,29 @@
 import apiClient from './client';
 
 export interface PointsLog {
-  id: string;
+  id: number;
+  userId: number;
+  taskId: number;
   amount: number;
-  reason: string;
+  type: string;
+  description: string;
   createdAt: string;
 }
 
 export const userApi = {
-  // 获取当前登录用户资料
   getProfile: () => {
-    return apiClient.get<{ code: number; data: any }>('/users/profile');
+    return apiClient.get<{ code: number; data: any }>('/user/profile');
   },
 
-  // 获取积分变更历史记录
   getPointsHistory: () => {
-    return apiClient.get<{ code: number; data: PointsLog[] }>('/users/points-history');
+    return apiClient.get<{ code: number; data: { total: number; list: PointsLog[] } }>('/user/points-history');
+  },
+
+  updateProfile: (data: { name?: string; email?: string; phone?: string }) => {
+    return apiClient.put<{ code: number; data: any }>('/user/profile', data);
+  },
+
+  changePassword: (data: { currentPassword: string; newPassword: string }) => {
+    return apiClient.put<{ code: number; data: string }>('/user/change-password', data);
   }
 };

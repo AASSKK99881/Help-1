@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -16,6 +16,7 @@ import {
   Save
 } from "lucide-react";
 import { toast } from "sonner";
+import { adminApi, SensitiveWord } from "../../api/admin";
 
 export function SystemSettings() {
   const [settings, setSettings] = useState({
@@ -27,18 +28,16 @@ export function SystemSettings() {
     allowAnonymous: true
   });
 
-  const [sensitiveWords, setSensitiveWords] = useState([
-    '代写', '代考', '作弊', '抄袭', '枪手'
-  ]);
+  const [sensitiveWords, setSensitiveWords] = useState<SensitiveWord[]>([]);
   const [newWord, setNewWord] = useState('');
 
-  const [operationLogs] = useState([
-    { id: '1', admin: '李老师', action: '审核通过需求', detail: '高数题目讲解', time: '2026-03-16 15:30' },
-    { id: '2', admin: '王老师', action: '调整用户积分', detail: '张三 +100积分', time: '2026-03-16 14:20' },
-    { id: '3', admin: '李老师', action: '封禁账号', detail: '用户ID: 2021099', time: '2026-03-16 10:15' },
-    { id: '4', admin: '王老师', action: '创建活动', detail: '三月互助之星', time: '2026-03-15 09:00' },
-    { id: '5', admin: '李老师', action: '修改系统参数', detail: '最低积分设置', time: '2026-03-14 16:45' },
-  ]);
+  const [operationLogs] = useState<any[]>([]);
+
+  useEffect(() => {
+    adminApi.getKeywords().then(res => {
+      if (res?.data) setSensitiveWords(res.data);
+    }).catch(() => {});
+  }, []);
 
   const handleSaveSettings = () => {
     toast.success('设置已保存', {
@@ -46,17 +45,28 @@ export function SystemSettings() {
     });
   };
 
-  const handleAddWord = () => {
-    if (newWord.trim() && !sensitiveWords.includes(newWord.trim())) {
-      setSensitiveWords([...sensitiveWords, newWord.trim()]);
-      setNewWord('');
-      toast.success('敏感词已添加');
+  const handleAddWord = async () => {
+    if (!newWord.trim()) return;
+    try {
+      const res = await adminApi.addKeyword(newWord.trim());
+      if (res?.data) {
+        setSensitiveWords(prev => [...prev, res.data]);
+        setNewWord('');
+        toast.success('敏感词已添加');
+      }
+    } catch {
+      toast.error('添加失败，可能已存在');
     }
   };
 
-  const handleRemoveWord = (word: string) => {
-    setSensitiveWords(sensitiveWords.filter(w => w !== word));
-    toast.success('敏感词已删除');
+  const handleRemoveWord = async (word: SensitiveWord) => {
+    try {
+      await adminApi.deleteKeyword(word.id);
+      setSensitiveWords(prev => prev.filter(w => w.id !== word.id));
+      toast.success('敏感词已删除');
+    } catch {
+      toast.error('删除失败');
+    }
   };
 
   return (
@@ -186,11 +196,11 @@ export function SystemSettings() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {sensitiveWords.map((word) => (
-                  <Badge key={word} variant="secondary" className="px-3 py-1">
-                    {word}
+                {sensitiveWords.map((sw) => (
+                  <Badge key={sw.id} variant="secondary" className="px-3 py-1">
+                    {sw.word}
                     <button
-                      onClick={() => handleRemoveWord(word)}
+                      onClick={() => handleRemoveWord(sw)}
                       className="ml-2 hover:text-red-600"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -217,21 +227,25 @@ export function SystemSettings() {
               <CardDescription>最近的管理操作记录</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {operationLogs.map((log, index) => (
-                  <div key={log.id}>
-                    {index > 0 && <Separator className="my-4" />}
-                    <div className="space-y-1">
-                      <div className="flex items-start justify-between">
-                        <span className="font-medium text-sm">{log.admin}</span>
-                        <span className="text-xs text-gray-500">{log.time}</span>
+              {operationLogs.length > 0 ? (
+                <div className="space-y-4">
+                  {operationLogs.map((log, index) => (
+                    <div key={log.id}>
+                      {index > 0 && <Separator className="my-4" />}
+                      <div className="space-y-1">
+                        <div className="flex items-start justify-between">
+                          <span className="font-medium text-sm">{log.admin}</span>
+                          <span className="text-xs text-gray-500">{log.time}</span>
+                        </div>
+                        <div className="text-sm text-gray-600">{log.action}</div>
+                        <div className="text-xs text-gray-500">{log.detail}</div>
                       </div>
-                      <div className="text-sm text-gray-600">{log.action}</div>
-                      <div className="text-xs text-gray-500">{log.detail}</div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 text-sm">暂无操作记录</div>
+              )}
             </CardContent>
           </Card>
 

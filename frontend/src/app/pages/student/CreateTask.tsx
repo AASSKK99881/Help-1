@@ -5,7 +5,7 @@ import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import { Label } from "../../components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -17,10 +17,12 @@ import { Alert, AlertDescription } from "../../components/ui/alert";
 import { InfoIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../../contexts/AuthContext";
+import { tasksApi } from "../../api/tasks";
 
 export function CreateTask() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     title: '',
     category: '',
@@ -30,21 +32,42 @@ export function CreateTask() {
     isAnonymous: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (parseInt(form.points) > (user?.points || 0)) {
+
+    const pointsNum = parseInt(form.points);
+    if (pointsNum > (user?.points || 0)) {
       toast.error('积分不足，请降低悬赏积分');
       return;
     }
 
-    toast.success('提交成功！等待教师审核', {
-      description: '审核通过后将自动发布到首页'
-    });
-    
-    setTimeout(() => {
-      navigate('/my-tasks');
-    }, 1500);
+    setSubmitting(true);
+    try {
+      const res = await tasksApi.createTask({
+        title: form.title,
+        description: form.description,
+        pointsReward: pointsNum,
+        category: form.category,
+        deadline: form.deadline,
+        isAnonymous: form.isAnonymous ? 1 : 0,
+      });
+
+      const reviewMsg = res?.data?.reviewMessage || '';
+
+      if (reviewMsg.startsWith('审核通过')) {
+        toast.success('发布成功！' + reviewMsg);
+      } else {
+        toast.warning('提交成功，' + reviewMsg);
+      }
+
+      setTimeout(() => {
+        navigate('/my-tasks');
+      }, 2000);
+    } catch (err) {
+      toast.error('提交失败，请重试');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -147,8 +170,8 @@ export function CreateTask() {
                 <strong className="block mb-1">发布规则提示：</strong>
                 <ul className="space-y-1 text-sm">
                   <li>• 发布的需求需经过教师审核，审核通过后方可展示</li>
-                  <li>• 悬赏积分将被冻结，任务完成后自动转给接单者</li>
-                  <li>• 发布后可随时取消，但频繁取消会影响信用分</li>
+                  <li>• 悬赏积分将在审核通过时扣除，任务完成后自动转给接单者</li>
+                  <li>• 发布后可随时取消，但进行中取消会扣除20%违约金</li>
                   <li>• 请确保需求内容真实合法，不得发布违规信息</li>
                 </ul>
               </AlertDescription>
@@ -158,8 +181,8 @@ export function CreateTask() {
               <Button type="button" variant="outline" className="flex-1" onClick={() => navigate('/')}>
                 取消
               </Button>
-              <Button type="submit" className="flex-1 bg-[#165DFF] hover:bg-[#0E4FD4]">
-                提交审核
+              <Button type="submit" className="flex-1 bg-[#165DFF] hover:bg-[#0E4FD4]" disabled={submitting}>
+                {submitting ? '提交中...' : '提交审核'}
               </Button>
             </div>
           </form>

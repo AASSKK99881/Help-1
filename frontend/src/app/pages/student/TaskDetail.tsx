@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
@@ -13,69 +13,76 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { Clock, Coins, User, Tag, Phone, Mail, MessageCircle, ArrowLeft } from "lucide-react";
+import { Clock, Coins, User, Tag, Mail, Phone, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "../../contexts/AuthContext";
+import { tasksApi, Task, TaskContactInfo } from "../../api/tasks";
+
+const statusMap: Record<number, { label: string; color: string }> = {
+  0: { label: '待审核', color: 'bg-[#FF7D00]' },
+  1: { label: '待接单', color: 'bg-[#165DFF]' },
+  2: { label: '进行中', color: 'bg-[#165DFF]' },
+  3: { label: '已完成', color: 'bg-[#52C41A]' },
+  4: { label: '已取消', color: 'bg-gray-500' },
+};
 
 export function TaskDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [task, setTask] = useState<Task | null>(null);
+  const [publisher, setPublisher] = useState<TaskContactInfo | null>(null);
+  const [acceptor, setAcceptor] = useState<TaskContactInfo | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
 
-  // 模拟任务详情数据
-  const task = {
-    id: id,
-    title: '帮忙代取快递',
-    description: '今天下午有课，快递到了但是取不了，需要帮忙代取一下放到宿舍楼下。快递在东门快递站，取货码会私信发给你。取完后放在3号宿舍楼一楼就行，我晚上下课回来自己拿。',
-    category: '生活帮助',
-    points: 20,
-    deadline: '2026-03-17 18:00',
-    createdAt: '2026-03-16 14:30',
-    publisher: {
-      id: 'u1',
-      name: '李明',
-      avatar: 'L',
-      studentId: '2021001',
-      phone: '138****5678',
-      email: 'liming@example.com',
-      creditScore: 98
-    },
-    status: 'open',
-    tags: ['紧急', '快递'],
-    requirements: [
-      '需要在今天18:00前完成',
-      '取货后拍照确认',
-      '需要有空闲时间下午去东门'
-    ],
-    relatedTasks: [
-      { id: '2', title: '高数题目讲解', points: 50 },
-      { id: '3', title: 'PPT设计美化', points: 80 },
-      { id: '5', title: '英语作文批改', points: 30 }
-    ]
+  useEffect(() => {
+    if (!id) return;
+    tasksApi.getTaskById(id).then(res => {
+      if (res?.data) {
+        setTask(res.data.task);
+        setPublisher(res.data.publisher || null);
+        setAcceptor(res.data.acceptor || null);
+      }
+    }).catch(() => {
+      toast.error('加载任务详情失败');
+    }).finally(() => setLoading(false));
+  }, [id]);
+
+  const handleAccept = () => setShowAcceptDialog(true);
+
+  const confirmAccept = async () => {
+    if (!id) return;
+    try {
+      await tasksApi.acceptTask(id);
+      toast.success('接取成功！请与发布者联系');
+      setShowAcceptDialog(false);
+      navigate('/my-tasks');
+    } catch {
+      toast.error('接取失败');
+    }
   };
 
-  const handleAccept = () => {
-    setShowAcceptDialog(true);
-  };
+  if (loading) {
+    return <div className="max-w-5xl mx-auto p-12 text-center text-gray-500">加载中...</div>;
+  }
 
-  const confirmAccept = () => {
-    toast.success('接取成功！请与发布者联系');
-    setShowAcceptDialog(false);
-    navigate('/my-tasks');
-  };
+  if (!task) {
+    return <div className="max-w-5xl mx-auto p-12 text-center text-gray-500">任务不存在</div>;
+  }
+
+  const status = statusMap[task.status] || { label: '未知', color: 'bg-gray-400' };
+  const isMyTask = user && Number(user.id) === task.publisherId;
+  const canAccept = task.status === 1 && !isMyTask;
 
   return (
     <div className="max-w-5xl mx-auto">
-      <Button 
-        variant="ghost" 
-        className="mb-4"
-        onClick={() => navigate('/')}
-      >
+      <Button variant="ghost" className="mb-4" onClick={() => navigate('/')}>
         <ArrowLeft className="w-4 h-4 mr-2" />
         返回首页
       </Button>
 
       <div className="grid grid-cols-3 gap-6">
-        {/* 左侧主要内容 */}
         <div className="col-span-2 space-y-6">
           <Card>
             <CardHeader>
@@ -83,8 +90,8 @@ export function TaskDetail() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-3">
                     <CardTitle className="text-2xl">{task.title}</CardTitle>
-                    <Badge variant="outline">{task.category}</Badge>
-                    <Badge className="bg-[#52C41A] text-white border-0">进行中</Badge>
+                    <Badge variant="outline">{task.category || '未分类'}</Badge>
+                    <Badge className={`${status.color} text-white border-0`}>{status.label}</Badge>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <span>发布于 {task.createdAt}</span>
@@ -93,7 +100,7 @@ export function TaskDetail() {
                 <div className="text-right">
                   <div className="flex items-center gap-1 text-[#FF7D00] mb-2">
                     <Coins className="w-6 h-6" />
-                    <span className="text-3xl font-bold">{task.points}</span>
+                    <span className="text-3xl font-bold">{task.pointsReward}</span>
                   </div>
                   <div className="text-sm text-gray-500">积分悬赏</div>
                 </div>
@@ -105,43 +112,7 @@ export function TaskDetail() {
                   <span className="w-1 h-5 bg-[#165DFF] rounded"></span>
                   需求描述
                 </h3>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {task.description}
-                </p>
-              </div>
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <span className="w-1 h-5 bg-[#165DFF] rounded"></span>
-                  要求说明
-                </h3>
-                <ul className="space-y-2">
-                  {task.requirements.map((req, index) => (
-                    <li key={index} className="flex items-start gap-2 text-gray-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#165DFF] mt-2"></span>
-                      {req}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <span className="w-1 h-5 bg-[#165DFF] rounded"></span>
-                  标签
-                </h3>
-                <div className="flex items-center gap-2">
-                  {task.tags.map(tag => (
-                    <Badge key={tag} variant="secondary">
-                      <Tag className="w-3 h-3 mr-1" />
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{task.description}</p>
               </div>
 
               <Separator />
@@ -149,100 +120,94 @@ export function TaskDetail() {
               <div className="flex items-center gap-2 text-gray-600">
                 <Clock className="w-5 h-5 text-[#FF5252]" />
                 <span className="font-medium">截止时间：</span>
-                <span className="text-[#FF5252]">{task.deadline}</span>
+                <span className="text-[#FF5252]">{task.deadline || '未设置'}</span>
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  className="flex-1 bg-[#165DFF] hover:bg-[#0E4FD4] h-12 text-base"
-                  onClick={handleAccept}
-                >
-                  立即接取
-                </Button>
-                <Button variant="outline" className="h-12">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  咨询发布者
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              {canAccept && (
+                <div className="flex gap-3 pt-4">
+                  <Button className="flex-1 bg-[#165DFF] hover:bg-[#0E4FD4] h-12 text-base" onClick={handleAccept}>
+                    立即接取
+                  </Button>
+                </div>
+              )}
 
-          {/* 相关推荐 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">相关需求推荐</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {task.relatedTasks.map(related => (
-                  <div 
-                    key={related.id}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/task/${related.id}`)}
-                  >
-                    <span className="text-gray-700">{related.title}</span>
-                    <div className="flex items-center gap-1 text-[#FF7D00]">
-                      <Coins className="w-4 h-4" />
-                      <span className="font-semibold">{related.points}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {isMyTask && task.status === 2 && (
+                <Button className="flex-1 bg-[#52C41A] hover:bg-[#45A817] h-12 text-base"
+                  onClick={async () => {
+                    await tasksApi.completeTask(task.id);
+                    toast.success('任务已完成');
+                    setTask({ ...task, status: 3 });
+                  }}>
+                  确认完成
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* 右侧信息卡片 */}
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">发布者信息</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle className="text-lg">发布者信息</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <Avatar className="w-12 h-12">
                   <AvatarFallback className="bg-[#165DFF] text-white text-lg">
-                    {task.publisher.avatar}
+                    {publisher ? publisher.name.charAt(0) : 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                  <div className="font-semibold">{task.publisher.name}</div>
-                  <div className="text-sm text-gray-500">学号: {task.publisher.studentId}</div>
+                <div>
+                  <div className="font-semibold">
+                    {publisher ? publisher.name : `用户${task.publisherId}`}
+                  </div>
                 </div>
               </div>
-
-              <Separator />
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">信用分</span>
-                  <span className="font-semibold text-[#52C41A]">{task.publisher.creditScore}</span>
+              {isMyTask && (
+                <p className="text-sm text-[#165DFF]">这是你发布的任务</p>
+              )}
+              {publisher && task.status >= 2 && (
+                <div className="space-y-2 pt-2 border-t">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Mail className="w-4 h-4" />
+                    <span>{publisher.email}</span>
+                  </div>
+                  {publisher.phone && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Phone className="w-4 h-4" />
+                      <span>{publisher.phone}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Phone className="w-4 h-4" />
-                  <span>{task.publisher.phone}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Mail className="w-4 h-4" />
-                  <span className="truncate">{task.publisher.email}</span>
-                </div>
-              </div>
-
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => toast.info('请先接取任务后联系')}
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                发送私信
-              </Button>
+              )}
             </CardContent>
           </Card>
+
+          {acceptor && task.status >= 2 && (
+            <Card>
+              <CardHeader><CardTitle className="text-lg">接单者信息</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-12 h-12">
+                    <AvatarFallback className="bg-[#52C41A] text-white text-lg">
+                      {acceptor.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="font-semibold">{acceptor.name}</div>
+                </div>
+                <div className="space-y-2 pt-2 border-t">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Mail className="w-4 h-4" />
+                    <span>{acceptor.email}</span>
+                  </div>
+                  {acceptor.phone && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Phone className="w-4 h-4" />
+                      <span>{acceptor.phone}</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="p-4 space-y-2">
@@ -258,14 +223,11 @@ export function TaskDetail() {
         </div>
       </div>
 
-      {/* 接取确认弹窗 */}
       <Dialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>确认接取任务？</DialogTitle>
-            <DialogDescription>
-              接取后请按时完成任务，如需取消请提前与发布者沟通
-            </DialogDescription>
+            <DialogDescription>接取后请按时完成任务，如需取消请提前与发布者沟通</DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-3">
             <div className="flex items-center justify-between">
@@ -274,20 +236,16 @@ export function TaskDetail() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">悬赏积分</span>
-              <span className="font-semibold text-[#FF7D00]">{task.points} 积分</span>
+              <span className="font-semibold text-[#FF7D00]">{task.pointsReward} 积分</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">截止时间</span>
-              <span className="text-[#FF5252]">{task.deadline}</span>
+              <span className="text-[#FF5252]">{task.deadline || '未设置'}</span>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAcceptDialog(false)}>
-              取消
-            </Button>
-            <Button className="bg-[#165DFF] hover:bg-[#0E4FD4]" onClick={confirmAccept}>
-              确认接取
-            </Button>
+            <Button variant="outline" onClick={() => setShowAcceptDialog(false)}>取消</Button>
+            <Button className="bg-[#165DFF] hover:bg-[#0E4FD4]" onClick={confirmAccept}>确认接取</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

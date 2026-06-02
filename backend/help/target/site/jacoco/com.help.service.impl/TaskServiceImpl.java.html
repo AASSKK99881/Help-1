@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">help-backend</a> &gt; <a href="index.source.html" class="el_package">com.help.service.impl</a> &gt; <span class="el_source">TaskServiceImpl.java</span></div><h1>TaskServiceImpl.java</h1><pre class="source lang-java linenums">package com.help.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.help.entity.PointsLog;
+import com.help.entity.Task;
+import com.help.entity.User;
+import com.help.mapper.PointsLogMapper;
+import com.help.mapper.TaskMapper;
+import com.help.mapper.UserMapper;
+import com.help.service.TaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+<span class="fc" id="L20">public class TaskServiceImpl extends ServiceImpl&lt;TaskMapper, Task&gt; implements TaskService {</span>
+
+    @Autowired
+    private TaskMapper taskMapper;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private PointsLogMapper pointsLogMapper;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void acceptTask(Long taskId, Long studentId) {
+<span class="fc" id="L32">        Task task = taskMapper.selectById(taskId);</span>
+<span class="pc bpc" id="L33" title="1 of 4 branches missed.">        if (task == null || task.getStatus() != 1) {</span>
+<span class="fc" id="L34">            throw new RuntimeException(&quot;任务不存在或已被接取&quot;);</span>
+        }
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (task.getPublisherId().equals(studentId)) {</span>
+<span class="fc" id="L37">            throw new RuntimeException(&quot;不能接取自己发布的任务&quot;);</span>
+        }
+
+<span class="fc" id="L40">        task.setStatus(2);</span>
+<span class="fc" id="L41">        task.setAcceptorId(studentId);</span>
+<span class="fc" id="L42">        taskMapper.updateById(task);</span>
+<span class="fc" id="L43">    }</span>
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void completeTask(Long taskId) {
+<span class="fc" id="L48">        Task task = taskMapper.selectById(taskId);</span>
+<span class="pc bpc" id="L49" title="1 of 4 branches missed.">        if (task == null || task.getStatus() != 2) {</span>
+<span class="fc" id="L50">            throw new RuntimeException(&quot;任务状态异常，无法完成&quot;);</span>
+        }
+
+<span class="fc" id="L53">        task.setStatus(3);</span>
+<span class="fc" id="L54">        taskMapper.updateById(task);</span>
+
+<span class="fc" id="L56">        User acceptor = userMapper.selectById(task.getAcceptorId());</span>
+<span class="fc" id="L57">        acceptor.setPoints(acceptor.getPoints() + task.getPointsReward());</span>
+<span class="fc" id="L58">        userMapper.updateById(acceptor);</span>
+
+<span class="fc" id="L60">        PointsLog log = new PointsLog();</span>
+<span class="fc" id="L61">        log.setUserId(acceptor.getId());</span>
+<span class="fc" id="L62">        log.setTaskId(taskId);</span>
+<span class="fc" id="L63">        log.setAmount(task.getPointsReward());</span>
+<span class="fc" id="L64">        log.setType(&quot;任务奖励&quot;);</span>
+<span class="fc" id="L65">        log.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L66">        pointsLogMapper.insert(log);</span>
+
+        // 退还发布者冻结的积分（发布时已扣）
+<span class="fc" id="L69">        User publisher = userMapper.selectById(task.getPublisherId());</span>
+<span class="fc" id="L70">        PointsLog releaseLog = new PointsLog();</span>
+<span class="fc" id="L71">        releaseLog.setUserId(publisher.getId());</span>
+<span class="fc" id="L72">        releaseLog.setTaskId(taskId);</span>
+<span class="fc" id="L73">        releaseLog.setAmount(0);</span>
+<span class="fc" id="L74">        releaseLog.setType(&quot;冻结解除&quot;);</span>
+<span class="fc" id="L75">        releaseLog.setDescription(&quot;任务完成，冻结积分已转给接单者&quot;);</span>
+<span class="fc" id="L76">        releaseLog.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L77">        pointsLogMapper.insert(releaseLog);</span>
+<span class="fc" id="L78">    }</span>
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelTask(Long taskId, Long userId) {
+<span class="nc" id="L83">        Task task = taskMapper.selectById(taskId);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (task == null) {</span>
+<span class="nc" id="L85">            throw new RuntimeException(&quot;任务不存在&quot;);</span>
+        }
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (!task.getPublisherId().equals(userId)) {</span>
+<span class="nc" id="L88">            throw new RuntimeException(&quot;只有发布者可以取消任务&quot;);</span>
+        }
+
+<span class="nc" id="L91">        int refund = 0;</span>
+<span class="nc" id="L92">        int penalty = 0;</span>
+<span class="nc" id="L93">        User publisher = userMapper.selectById(task.getPublisherId());</span>
+
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (task.getStatus() == 0) {</span>
+            // 待审核：积分从未冻结，直接取消
+<span class="nc" id="L97">            refund = 0;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        } else if (task.getStatus() == 1) {</span>
+            // 待接单：积分已冻结，全额退还
+<span class="nc" id="L100">            refund = task.getPointsReward();</span>
+<span class="nc" id="L101">            publisher.setPoints(publisher.getPoints() + refund);</span>
+<span class="nc" id="L102">            userMapper.updateById(publisher);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        } else if (task.getStatus() == 2) {</span>
+            // 进行中取消：扣除 20% 违约金
+<span class="nc" id="L105">            penalty = Math.max(1, (int) (task.getPointsReward() * 0.2));</span>
+<span class="nc" id="L106">            refund = task.getPointsReward() - penalty;</span>
+<span class="nc" id="L107">            publisher.setPoints(publisher.getPoints() + refund);</span>
+<span class="nc" id="L108">            userMapper.updateById(publisher);</span>
+
+<span class="nc" id="L110">            PointsLog penaltyLog = new PointsLog();</span>
+<span class="nc" id="L111">            penaltyLog.setUserId(task.getPublisherId());</span>
+<span class="nc" id="L112">            penaltyLog.setTaskId(taskId);</span>
+<span class="nc" id="L113">            penaltyLog.setAmount(-penalty);</span>
+<span class="nc" id="L114">            penaltyLog.setType(&quot;违约扣除&quot;);</span>
+<span class="nc" id="L115">            penaltyLog.setDescription(&quot;取消进行中任务，扣除&quot; + penalty + &quot;积分违约金&quot;);</span>
+<span class="nc" id="L116">            penaltyLog.setCreatedAt(LocalDateTime.now());</span>
+<span class="nc" id="L117">            pointsLogMapper.insert(penaltyLog);</span>
+<span class="nc" id="L118">        } else {</span>
+<span class="nc" id="L119">            throw new RuntimeException(&quot;当前状态不可取消&quot;);</span>
+        }
+
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (refund &gt; 0) {</span>
+<span class="nc" id="L123">            PointsLog refundLog = new PointsLog();</span>
+<span class="nc" id="L124">            refundLog.setUserId(task.getPublisherId());</span>
+<span class="nc" id="L125">            refundLog.setTaskId(taskId);</span>
+<span class="nc" id="L126">            refundLog.setAmount(refund);</span>
+<span class="nc" id="L127">            refundLog.setType(&quot;积分退还&quot;);</span>
+<span class="nc" id="L128">            refundLog.setDescription(&quot;取消任务，退还&quot; + refund + &quot;积分&quot;);</span>
+<span class="nc" id="L129">            refundLog.setCreatedAt(LocalDateTime.now());</span>
+<span class="nc" id="L130">            pointsLogMapper.insert(refundLog);</span>
+        }
+
+<span class="nc" id="L133">        task.setStatus(4);</span>
+<span class="nc" id="L134">        taskMapper.updateById(task);</span>
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public List&lt;Task&gt; getPublishedTasks(Long userId) {
+<span class="nc" id="L139">        QueryWrapper&lt;Task&gt; wrapper = new QueryWrapper&lt;&gt;();</span>
+<span class="nc" id="L140">        wrapper.eq(&quot;publisher_id&quot;, userId).orderByDesc(&quot;created_at&quot;);</span>
+<span class="nc" id="L141">        return taskMapper.selectList(wrapper);</span>
+    }
+
+    @Override
+    public List&lt;Task&gt; getAcceptedTasks(Long userId) {
+<span class="nc" id="L146">        QueryWrapper&lt;Task&gt; wrapper = new QueryWrapper&lt;&gt;();</span>
+<span class="nc" id="L147">        wrapper.eq(&quot;acceptor_id&quot;, userId).orderByDesc(&quot;created_at&quot;);</span>
+<span class="nc" id="L148">        return taskMapper.selectList(wrapper);</span>
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void approveTask(Long taskId) {
+<span class="nc" id="L154">        Task task = taskMapper.selectById(taskId);</span>
+<span class="nc bnc" id="L155" title="All 4 branches missed.">        if (task == null || task.getStatus() != 0) {</span>
+<span class="nc" id="L156">            throw new RuntimeException(&quot;任务状态异常，无法审核&quot;);</span>
+        }
+
+        // 冻结发布者积分
+<span class="nc" id="L160">        User publisher = userMapper.selectById(task.getPublisherId());</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (publisher.getPoints() &lt; task.getPointsReward()) {</span>
+<span class="nc" id="L162">            throw new RuntimeException(&quot;发布者积分不足&quot;);</span>
+        }
+<span class="nc" id="L164">        publisher.setPoints(publisher.getPoints() - task.getPointsReward());</span>
+<span class="nc" id="L165">        userMapper.updateById(publisher);</span>
+
+        // 记录冻结流水
+<span class="nc" id="L168">        PointsLog freezeLog = new PointsLog();</span>
+<span class="nc" id="L169">        freezeLog.setUserId(publisher.getId());</span>
+<span class="nc" id="L170">        freezeLog.setTaskId(taskId);</span>
+<span class="nc" id="L171">        freezeLog.setAmount(-task.getPointsReward());</span>
+<span class="nc" id="L172">        freezeLog.setType(&quot;积分冻结&quot;);</span>
+<span class="nc" id="L173">        freezeLog.setDescription(&quot;发布任务，冻结悬赏积分&quot;);</span>
+<span class="nc" id="L174">        freezeLog.setCreatedAt(LocalDateTime.now());</span>
+<span class="nc" id="L175">        pointsLogMapper.insert(freezeLog);</span>
+
+        // 状态改为待接单
+<span class="nc" id="L178">        task.setStatus(1);</span>
+<span class="nc" id="L179">        taskMapper.updateById(task);</span>
+<span class="nc" id="L180">    }</span>
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void rejectTask(Long taskId, String reason) {
+<span class="nc" id="L185">        Task task = taskMapper.selectById(taskId);</span>
+<span class="nc bnc" id="L186" title="All 4 branches missed.">        if (task == null || task.getStatus() != 0) {</span>
+<span class="nc" id="L187">            throw new RuntimeException(&quot;任务状态异常，无法审核&quot;);</span>
+        }
+
+<span class="nc" id="L190">        task.setStatus(4); // 已取消</span>
+<span class="nc" id="L191">        taskMapper.updateById(task);</span>
+
+        // 记录驳回（无需退积分，因为审核前未扣积分）
+<span class="nc" id="L194">        PointsLog rejectLog = new PointsLog();</span>
+<span class="nc" id="L195">        rejectLog.setUserId(task.getPublisherId());</span>
+<span class="nc" id="L196">        rejectLog.setTaskId(taskId);</span>
+<span class="nc" id="L197">        rejectLog.setAmount(0);</span>
+<span class="nc" id="L198">        rejectLog.setType(&quot;审核驳回&quot;);</span>
+<span class="nc" id="L199">        rejectLog.setDescription(&quot;审核驳回，原因：&quot; + reason);</span>
+<span class="nc" id="L200">        rejectLog.setCreatedAt(LocalDateTime.now());</span>
+<span class="nc" id="L201">        pointsLogMapper.insert(rejectLog);</span>
+<span class="nc" id="L202">    }</span>
+
+    @Override
+    public List&lt;Task&gt; getPendingTasks() {
+<span class="nc" id="L206">        QueryWrapper&lt;Task&gt; wrapper = new QueryWrapper&lt;&gt;();</span>
+<span class="nc" id="L207">        wrapper.eq(&quot;status&quot;, 0).orderByDesc(&quot;created_at&quot;);</span>
+<span class="nc" id="L208">        return taskMapper.selectList(wrapper);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

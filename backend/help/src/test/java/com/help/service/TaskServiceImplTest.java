@@ -82,13 +82,19 @@ public class TaskServiceImplTest {
         mockTask.setStatus(2); // 进行中
         mockTask.setAcceptorId(3L);
         mockTask.setPointsReward(50);
+        mockTask.setPublisherId(2L);
 
         User mockUser = new User();
         mockUser.setId(3L);
         mockUser.setPoints(100);
 
+        User mockPublisher = new User();
+        mockPublisher.setId(2L);
+        mockPublisher.setPoints(200);
+
         when(taskMapper.selectById(1L)).thenReturn(mockTask);
         when(userMapper.selectById(3L)).thenReturn(mockUser);
+        when(userMapper.selectById(2L)).thenReturn(mockPublisher);
 
         taskService.completeTask(1L);
 
@@ -96,7 +102,7 @@ public class TaskServiceImplTest {
         assertEquals(150, mockUser.getPoints());
         verify(taskMapper, times(1)).updateById(mockTask);
         verify(userMapper, times(1)).updateById(mockUser);
-        verify(pointsLogMapper, times(1)).insert(any(PointsLog.class));
+        verify(pointsLogMapper, times(2)).insert(any(PointsLog.class));
     }
 
     // 5. 测试完成任务 - 异常情况（任务状态不正确）

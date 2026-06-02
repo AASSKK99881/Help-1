@@ -1,47 +1,76 @@
 import apiClient from './client';
 
-// 定义任务类型
 export interface Task {
-  id: string;
+  id: number;
+  publisherId: number;
+  acceptorId?: number;
+  category?: string;
   title: string;
   description: string;
-  points: number;
-  status: 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-  creatorId: string;
+  isAnonymous?: number;
+  pointsReward: number;
+  status: number; // 0待审, 1待接, 2进行中, 3完成, 4已取消
+  deadline?: string;
   createdAt: string;
 }
 
-// 分页查询参数类型
+export interface TaskContactInfo {
+  name: string;
+  email: string;
+  phone?: string;
+}
+
+export interface TaskDetailData {
+  task: Task;
+  publisher?: TaskContactInfo;
+  acceptor?: TaskContactInfo;
+}
+
 export interface TaskQueryParams {
   page?: number;
   size?: number;
-  status?: string;
+  status?: string | number;
   keyword?: string;
+  category?: string;
 }
 
 export const tasksApi = {
-  // 获取任务列表（包含分页和筛选，对标作业"数据查询"要求）
   getTasks: (params?: TaskQueryParams) => {
     return apiClient.get<{ code: number; data: { total: number; list: Task[] } }>('/tasks', { params });
   },
 
-  // 获取单个任务详情
-  getTaskById: (id: string) => {
-    return apiClient.get<{ code: number; data: Task }>(`/tasks/${id}`);
+  getTaskById: (id: string | number) => {
+    return apiClient.get<{ code: number; data: TaskDetailData }>(`/tasks/${id}`);
   },
 
-  // 发布新委托任务（对标作业"核心业务 CRUD"要求）
-  createTask: (data: { title: string; description: string; points: number }) => {
-    return apiClient.post<{ code: number; data: Task }>('/tasks', data);
+  createTask: (data: {
+    title: string;
+    description: string;
+    pointsReward: number;
+    category: string;
+    deadline: string;
+    isAnonymous?: number;
+  }) => {
+    return apiClient.post<{ code: number; data: { task: Task; reviewMessage: string } }>('/tasks', data);
   },
 
-  // 接取任务
-  acceptTask: (id: string) => {
-    return apiClient.post<{ code: number; data: any }>(`/tasks/${id}/accept`);
+  getMyPublished: () => {
+    return apiClient.get<{ code: number; data: { total: number; list: Task[] } }>('/tasks/my/published');
   },
-  
-  // 确认任务完成
-  completeTask: (id: string) => {
-    return apiClient.put<{ code: number; data: any }>(`/tasks/${id}/complete`);
+
+  getMyAccepted: () => {
+    return apiClient.get<{ code: number; data: { total: number; list: Task[] } }>('/tasks/my/accepted');
+  },
+
+  acceptTask: (id: string | number) => {
+    return apiClient.post<{ code: number; data: string }>(`/tasks/${id}/accept`);
+  },
+
+  completeTask: (id: string | number) => {
+    return apiClient.post<{ code: number; data: string }>(`/tasks/${id}/complete`);
+  },
+
+  cancelTask: (id: string | number) => {
+    return apiClient.post<{ code: number; data: string }>(`/tasks/${id}/cancel`);
   }
 };

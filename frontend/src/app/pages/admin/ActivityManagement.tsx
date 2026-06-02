@@ -1,134 +1,88 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import { Label } from "../../components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
-import { Plus, Calendar, Users, Edit, Trash2, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
+import { Plus, Calendar, Users, Eye, CheckCircle, XCircle, Gift, Trash2, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { adminApi } from "../../api/admin";
 
-const mockActivities = [
-  {
-    id: '1',
-    title: '三月互助之星评选',
-    description: '评选本月最热心互助的同学，获奖者将获得积分奖励',
-    startDate: '2026-03-01',
-    endDate: '2026-03-31',
-    reward: 100,
-    participants: 45,
-    status: 'active'
-  },
-  {
-    id: '2',
-    title: '新用户注册有礼',
-    description: '新注册用户即可获得100积分奖励',
-    startDate: '2026-01-01',
-    endDate: '2026-12-31',
-    reward: 100,
-    participants: 234,
-    status: 'active'
-  },
-  {
-    id: '3',
-    title: '寒假互助周',
-    description: '寒假期间完成任务可获得双倍积分',
-    startDate: '2026-01-20',
-    endDate: '2026-02-20',
-    reward: 0,
-    participants: 89,
-    status: 'ended'
-  },
-];
+const statusMap: Record<number, string> = { 0: '招募中', 1: '进行中', 2: '已结束' };
+const pStatusMap: Record<number, string> = { 0: '待审核', 1: '已入选', 2: '已完成', 3: '已放弃' };
 
 export function ActivityManagement() {
-  const [activities, setActivities] = useState(mockActivities);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
-  const [activityForm, setActivityForm] = useState({
-    title: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    reward: ''
-  });
+  const [detailData, setDetailData] = useState<any>(null);
+  const [form, setForm] = useState({ title: '', description: '', location: '', startTime: '', endTime: '', requiredCount: '', pointsReward: '' });
+
+  const loadActivities = () => {
+    adminApi.getActivities().then(res => setActivities(res?.data || [])).finally(() => setLoading(false));
+  };
+  useEffect(() => { loadActivities(); }, []);
 
   const handleCreate = () => {
-    setActivityForm({
-      title: '',
-      description: '',
-      startDate: '',
-      endDate: '',
-      reward: ''
-    });
+    setForm({ title: '', description: '', location: '', startTime: '', endTime: '', requiredCount: '', pointsReward: '' });
     setShowCreateDialog(true);
   };
 
-  const confirmCreate = () => {
-    const newActivity = {
-      id: String(activities.length + 1),
-      ...activityForm,
-      reward: parseInt(activityForm.reward),
-      participants: 0,
-      status: 'active'
-    };
-    
-    setActivities(prev => [newActivity, ...prev]);
-    toast.success('活动创建成功', {
-      description: '新活动已发布到学生端'
-    });
-    setShowCreateDialog(false);
+  const confirmCreate = async () => {
+    try {
+      await adminApi.createActivity(form);
+      toast.success('活动创建成功');
+      setShowCreateDialog(false);
+      loadActivities();
+    } catch { toast.error('创建失败'); }
   };
 
-  const handleEdit = (activity: any) => {
+  const handleEnd = async (id: number) => {
+    await adminApi.endActivity(id);
+    toast.success('活动已结束');
+    loadActivities();
+  };
+
+  const openDetail = async (activity: any) => {
     setSelectedActivity(activity);
-    setActivityForm({
-      title: activity.title,
-      description: activity.description,
-      startDate: activity.startDate,
-      endDate: activity.endDate,
-      reward: String(activity.reward)
-    });
-    setShowEditDialog(true);
+    try {
+      const res = await adminApi.getActivityDetail(activity.id);
+      setDetailData(res?.data);
+      setShowDetailDialog(true);
+    } catch { toast.error('加载失败'); }
   };
 
-  const confirmEdit = () => {
-    setActivities(prev => prev.map(a => 
-      a.id === selectedActivity.id 
-        ? { ...a, ...activityForm, reward: parseInt(activityForm.reward) }
-        : a
-    ));
-    toast.success('活动已更新');
-    setShowEditDialog(false);
+  const handleApprove = async (userId: number) => {
+    if (!selectedActivity) return;
+    await adminApi.approveParticipant(selectedActivity.id, userId);
+    toast.success('已通过');
+    openDetail(selectedActivity);
   };
 
-  const handleDelete = (activity: any) => {
-    setSelectedActivity(activity);
-    setShowDeleteDialog(true);
+  const handleReject = async (userId: number) => {
+    if (!selectedActivity) return;
+    await adminApi.rejectParticipant(selectedActivity.id, userId);
+    toast.success('已拒绝');
+    openDetail(selectedActivity);
   };
 
-  const confirmDelete = () => {
-    setActivities(prev => prev.filter(a => a.id !== selectedActivity.id));
-    toast.success('活动已删除');
-    setShowDeleteDialog(false);
+  const handleReward = async (userId: number) => {
+    if (!selectedActivity) return;
+    await adminApi.rewardParticipant(selectedActivity.id, userId);
+    toast.success('积分已发放');
+    openDetail(selectedActivity);
+  };
+
+  const handleRemove = async (userId: number) => {
+    if (!selectedActivity) return;
+    await adminApi.removeParticipant(selectedActivity.id, userId);
+    toast.success('已剔除');
+    openDetail(selectedActivity);
   };
 
   return (
@@ -136,325 +90,118 @@ export function ActivityManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">活动管理</h1>
-          <p className="text-gray-600">创建和管理平台官方活动</p>
+          <p className="text-gray-600">创建和管理校园互助活动</p>
         </div>
         <Button className="bg-[#165DFF] hover:bg-[#0E4FD4]" onClick={handleCreate}>
-          <Plus className="w-4 h-4 mr-2" />
-          新建活动
+          <Plus className="w-4 h-4 mr-2" />新建活动
         </Button>
       </div>
 
-      {/* 统计卡片 */}
       <div className="grid grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">进行中</p>
-                <p className="text-3xl font-bold text-[#52C41A]">
-                  {activities.filter(a => a.status === 'active').length}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-green-50">
-                <Calendar className="w-6 h-6 text-[#52C41A]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">总参与人数</p>
-                <p className="text-3xl font-bold text-[#165DFF]">
-                  {activities.reduce((sum, a) => sum + a.participants, 0)}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-blue-50">
-                <Users className="w-6 h-6 text-[#165DFF]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">已结束</p>
-                <p className="text-3xl font-bold text-gray-500">
-                  {activities.filter(a => a.status === 'ended').length}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-50">
-                <Calendar className="w-6 h-6 text-gray-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="p-6"><p className="text-sm text-gray-600 mb-1">招募中</p><p className="text-3xl font-bold text-[#52C41A]">{activities.filter(a => a.status === 0).length}</p></CardContent></Card>
+        <Card><CardContent className="p-6"><p className="text-sm text-gray-600 mb-1">进行中</p><p className="text-3xl font-bold text-[#165DFF]">{activities.filter(a => a.status === 1).length}</p></CardContent></Card>
+        <Card><CardContent className="p-6"><p className="text-sm text-gray-600 mb-1">已结束</p><p className="text-3xl font-bold text-gray-500">{activities.filter(a => a.status === 2).length}</p></CardContent></Card>
       </div>
 
-      {/* 活动列表 */}
       <Card>
-        <CardHeader>
-          <CardTitle>活动列表</CardTitle>
-          <CardDescription>管理所有平台活动</CardDescription>
-        </CardHeader>
+        <CardHeader><CardTitle>活动列表</CardTitle></CardHeader>
         <CardContent>
+          {loading ? <div className="text-center py-12 text-gray-500">加载中...</div> :
+          activities.length === 0 ? <div className="text-center py-12 text-gray-500">暂无活动</div> :
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>活动名称</TableHead>
-                <TableHead>活动时间</TableHead>
-                <TableHead>奖励积分</TableHead>
-                <TableHead>参与人数</TableHead>
+                <TableHead>地点</TableHead>
+                <TableHead>时间</TableHead>
+                <TableHead>人数</TableHead>
+                <TableHead>积分</TableHead>
                 <TableHead>状态</TableHead>
                 <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {activities.map((activity) => (
-                <TableRow key={activity.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{activity.title}</div>
-                      <div className="text-sm text-gray-500 line-clamp-1">
-                        {activity.description}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{activity.startDate}</div>
-                      <div className="text-gray-500">至 {activity.endDate}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-semibold text-[#FF7D00]">
-                      {activity.reward > 0 ? `${activity.reward} 积分` : '-'}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-semibold text-[#165DFF]">
-                      {activity.participants}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {activity.status === 'active' ? (
-                      <Badge className="bg-[#52C41A] text-white border-0">进行中</Badge>
-                    ) : (
-                      <Badge variant="secondary">已结束</Badge>
-                    )}
-                  </TableCell>
+              {activities.map((a: any) => (
+                <TableRow key={a.id}>
+                  <TableCell className="font-medium">{a.title}</TableCell>
+                  <TableCell>{a.location}</TableCell>
+                  <TableCell className="text-sm">{a.startTime?.substring(0,16)}</TableCell>
+                  <TableCell>{a.approvedCount || 0}/{a.requiredCount}</TableCell>
+                  <TableCell><span className="font-semibold text-[#FF7D00]">{a.pointsReward}</span></TableCell>
+                  <TableCell><Badge className={a.status===0?'bg-[#52C41A]':a.status===1?'bg-[#165DFF]':'bg-gray-500'}>{statusMap[a.status]||'未知'}</Badge></TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleEdit(activity)}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="text-red-600"
-                        onClick={() => handleDelete(activity)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => openDetail(a)}><Eye className="w-4 h-4" /></Button>
+                      {a.status === 0 && <Button variant="ghost" size="sm" className="text-[#FF5252]" onClick={() => handleEnd(a.id)}>结束</Button>}
+                      {a.status === 1 && <Button variant="ghost" size="sm" className="text-[#FF5252]" onClick={() => handleEnd(a.id)}>结束</Button>}
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+          </Table>}
         </CardContent>
       </Card>
 
-      {/* 创建活动弹窗 */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>新建活动</DialogTitle>
-            <DialogDescription>
-              创建一个新的平台活动
-            </DialogDescription>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>新建活动</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="create-title">活动标题 *</Label>
-              <Input
-                id="create-title"
-                placeholder="请输入活动标题"
-                value={activityForm.title}
-                onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="create-description">活动描述 *</Label>
-              <Textarea
-                id="create-description"
-                placeholder="详细描述活动内容和规则"
-                value={activityForm.description}
-                onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
-                rows={4}
-              />
-            </div>
-
+            <div className="space-y-2"><Label>活动标题 *</Label><Input value={form.title} onChange={e=>setForm({...form,title:e.target.value})} /></div>
+            <div className="space-y-2"><Label>活动描述</Label><Textarea value={form.description} onChange={e=>setForm({...form,description:e.target.value})} rows={3} /></div>
+            <div className="space-y-2"><Label>地点 *</Label><Input value={form.location} onChange={e=>setForm({...form,location:e.target.value})} /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="create-start">开始时间 *</Label>
-                <Input
-                  id="create-start"
-                  type="date"
-                  value={activityForm.startDate}
-                  onChange={(e) => setActivityForm({ ...activityForm, startDate: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="create-end">结束时间 *</Label>
-                <Input
-                  id="create-end"
-                  type="date"
-                  value={activityForm.endDate}
-                  onChange={(e) => setActivityForm({ ...activityForm, endDate: e.target.value })}
-                />
-              </div>
+              <div className="space-y-2"><Label>开始时间 *</Label><Input type="datetime-local" value={form.startTime} onChange={e=>setForm({...form,startTime:e.target.value})} /></div>
+              <div className="space-y-2"><Label>结束时间 *</Label><Input type="datetime-local" value={form.endTime} onChange={e=>setForm({...form,endTime:e.target.value})} /></div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="create-reward">奖励积分</Label>
-              <Input
-                id="create-reward"
-                type="number"
-                placeholder="设置奖励积分，0表示无积分奖励"
-                value={activityForm.reward}
-                onChange={(e) => setActivityForm({ ...activityForm, reward: e.target.value })}
-                min={0}
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>所需人数 *</Label><Input type="number" value={form.requiredCount} onChange={e=>setForm({...form,requiredCount:e.target.value})} min={1} /></div>
+              <div className="space-y-2"><Label>每人积分 *</Label><Input type="number" value={form.pointsReward} onChange={e=>setForm({...form,pointsReward:e.target.value})} min={1} /></div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-              取消
-            </Button>
-            <Button 
-              className="bg-[#165DFF] hover:bg-[#0E4FD4]"
-              onClick={confirmCreate}
-              disabled={!activityForm.title || !activityForm.description || !activityForm.startDate || !activityForm.endDate}
-            >
-              创建活动
-            </Button>
-          </DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={()=>setShowCreateDialog(false)}>取消</Button><Button className="bg-[#165DFF]" onClick={confirmCreate}>创建</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* 编辑活动弹窗 */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>编辑活动</DialogTitle>
-            <DialogDescription>
-              修改活动信息
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-title">活动标题 *</Label>
-              <Input
-                id="edit-title"
-                value={activityForm.title}
-                onChange={(e) => setActivityForm({ ...activityForm, title: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">活动描述 *</Label>
-              <Textarea
-                id="edit-description"
-                value={activityForm.description}
-                onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
-                rows={4}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-start">开始时间 *</Label>
-                <Input
-                  id="edit-start"
-                  type="date"
-                  value={activityForm.startDate}
-                  onChange={(e) => setActivityForm({ ...activityForm, startDate: e.target.value })}
-                />
+      <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog} >
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-auto">
+          <DialogHeader><DialogTitle>{selectedActivity?.title} - 参与者管理</DialogTitle></DialogHeader>
+          {detailData && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-4 gap-3 text-sm">
+                <div><MapPin className="w-4 h-4 inline mr-1" />{detailData.location}</div>
+                <div><Clock className="w-4 h-4 inline mr-1" />{detailData.startTime?.substring(0,16)}</div>
+                <div><Users className="w-4 h-4 inline mr-1" />{detailData.participants?.filter((p:any)=>p.status===1).length}/{detailData.requiredCount}</div>
+                <div className="font-semibold text-[#FF7D00]">{detailData.pointsReward}积分/人</div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-end">结束时间 *</Label>
-                <Input
-                  id="edit-end"
-                  type="date"
-                  value={activityForm.endDate}
-                  onChange={(e) => setActivityForm({ ...activityForm, endDate: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-reward">奖励积分</Label>
-              <Input
-                id="edit-reward"
-                type="number"
-                value={activityForm.reward}
-                onChange={(e) => setActivityForm({ ...activityForm, reward: e.target.value })}
-                min={0}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-              取消
-            </Button>
-            <Button 
-              className="bg-[#165DFF] hover:bg-[#0E4FD4]"
-              onClick={confirmEdit}
-            >
-              保存修改
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* 删除确认弹窗 */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-[#FF5252]">删除活动</DialogTitle>
-            <DialogDescription>
-              确认删除该活动？此操作不可撤销
-            </DialogDescription>
-          </DialogHeader>
-          {selectedActivity && (
-            <div className="py-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="font-medium mb-2">{selectedActivity.title}</div>
-                <div className="text-sm text-gray-600">
-                  参与人数：{selectedActivity.participants}
-                </div>
-              </div>
+              <Table>
+                <TableHeader><TableRow><TableHead>姓名</TableHead><TableHead>学号</TableHead><TableHead>邮箱</TableHead><TableHead>信誉分</TableHead><TableHead>状态</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader>
+                <TableBody>
+                  {detailData.participants?.map((p:any) => (
+                    <TableRow key={p.userId}>
+                      <TableCell className="font-medium">{p.name}</TableCell>
+                      <TableCell>{p.username}</TableCell>
+                      <TableCell className="text-sm">{p.email}</TableCell>
+                      <TableCell><span className={p.creditScore>=80?'text-[#52C41A]':'text-[#FF5252]'}>{p.creditScore}</span></TableCell>
+                      <TableCell><Badge variant="outline">{pStatusMap[p.status]}</Badge></TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          {p.status===0 && <><Button size="sm" variant="ghost" className="text-[#52C41A]" onClick={()=>handleApprove(p.userId)}><CheckCircle className="w-4 h-4" /></Button><Button size="sm" variant="ghost" className="text-[#FF5252]" onClick={()=>handleReject(p.userId)}><XCircle className="w-4 h-4" /></Button></>}
+                          {p.status===1 && <><Button size="sm" variant="ghost" className="text-[#FF7D00]" onClick={()=>handleReward(p.userId)}><Gift className="w-4 h-4" /></Button><Button size="sm" variant="ghost" className="text-red-600" onClick={()=>handleRemove(p.userId)}><Trash2 className="w-4 h-4" /></Button></>}
+                          {p.status===2 && <Badge className="bg-[#52C41A]">已发放</Badge>}
+                          {p.status===3 && <Badge variant="secondary">已放弃</Badge>}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {(!detailData.participants || detailData.participants.length===0) && (
+                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-gray-500">暂无报名者</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
-              取消
-            </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
-              确认删除
-            </Button>
-          </DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={()=>setShowDetailDialog(false)}>关闭</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

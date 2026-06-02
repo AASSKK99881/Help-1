@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">help-backend</a> &gt; <a href="index.source.html" class="el_package">com.help.controller</a> &gt; <span class="el_source">TaskController.java</span></div><h1>TaskController.java</h1><pre class="source lang-java linenums">package com.help.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.help.common.Result;
+import com.help.entity.Task;
+import com.help.service.TaskService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/tasks&quot;)
+@CrossOrigin
+<span class="fc" id="L19">public class TaskController {</span>
+
+    @Autowired
+    private TaskService taskService;
+
+    @GetMapping
+    public Result&lt;Map&lt;String, Object&gt;&gt; getTasks(
+            @RequestParam(defaultValue = &quot;1&quot;) Integer page,
+            @RequestParam(defaultValue = &quot;10&quot;) Integer size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category) {
+
+<span class="fc" id="L31">        QueryWrapper&lt;Task&gt; wrapper = new QueryWrapper&lt;&gt;();</span>
+        // 只展示已审核通过且未取消的任务
+<span class="fc" id="L33">        wrapper.ge(&quot;status&quot;, 1).ne(&quot;status&quot;, 4);</span>
+
+<span class="pc bpc" id="L35" title="3 of 4 branches missed.">        if (keyword != null &amp;&amp; !keyword.isBlank()) {</span>
+<span class="nc" id="L36">            wrapper.and(w -&gt; w.like(&quot;title&quot;, keyword).or().like(&quot;description&quot;, keyword));</span>
+        }
+<span class="pc bpc" id="L38" title="5 of 6 branches missed.">        if (category != null &amp;&amp; !category.isBlank() &amp;&amp; !&quot;全部&quot;.equals(category)) {</span>
+<span class="nc" id="L39">            wrapper.eq(&quot;category&quot;, category);</span>
+        }
+<span class="fc" id="L41">        wrapper.orderByDesc(&quot;created_at&quot;);</span>
+
+<span class="fc" id="L43">        List&lt;Task&gt; tasks = taskService.list(wrapper);</span>
+
+<span class="fc" id="L45">        Map&lt;String, Object&gt; responseData = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L46">        responseData.put(&quot;total&quot;, tasks.size());</span>
+<span class="fc" id="L47">        responseData.put(&quot;list&quot;, tasks);</span>
+
+<span class="fc" id="L49">        return Result.success(responseData);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public Result&lt;Task&gt; getTaskById(@PathVariable Long id) {
+<span class="nc" id="L54">        Task task = taskService.getById(id);</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (task == null) {</span>
+<span class="nc" id="L56">            return Result.error(&quot;任务不存在&quot;);</span>
+        }
+<span class="nc" id="L58">        return Result.success(task);</span>
+    }
+
+    @PostMapping
+    public Result&lt;Task&gt; createTask(@RequestBody Task task, HttpServletRequest request) {
+<span class="fc" id="L63">        Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="fc" id="L64">        task.setPublisherId(userId);</span>
+<span class="fc" id="L65">        task.setStatus(0);</span>
+<span class="fc" id="L66">        task.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L67">        taskService.save(task);</span>
+<span class="fc" id="L68">        return Result.success(task);</span>
+    }
+
+    @GetMapping(&quot;/my/published&quot;)
+    public Result&lt;Map&lt;String, Object&gt;&gt; getMyPublishedTasks(HttpServletRequest request) {
+<span class="nc" id="L73">        Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="nc" id="L74">        List&lt;Task&gt; tasks = taskService.getPublishedTasks(userId);</span>
+<span class="nc" id="L75">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L76">        data.put(&quot;total&quot;, tasks.size());</span>
+<span class="nc" id="L77">        data.put(&quot;list&quot;, tasks);</span>
+<span class="nc" id="L78">        return Result.success(data);</span>
+    }
+
+    @GetMapping(&quot;/my/accepted&quot;)
+    public Result&lt;Map&lt;String, Object&gt;&gt; getMyAcceptedTasks(HttpServletRequest request) {
+<span class="nc" id="L83">        Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="nc" id="L84">        List&lt;Task&gt; tasks = taskService.getAcceptedTasks(userId);</span>
+<span class="nc" id="L85">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L86">        data.put(&quot;total&quot;, tasks.size());</span>
+<span class="nc" id="L87">        data.put(&quot;list&quot;, tasks);</span>
+<span class="nc" id="L88">        return Result.success(data);</span>
+    }
+
+    @PostMapping(&quot;/{id}/accept&quot;)
+    public Result&lt;String&gt; acceptTask(@PathVariable Long id, HttpServletRequest request) {
+        try {
+<span class="fc" id="L94">            Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="fc" id="L95">            taskService.acceptTask(id, userId);</span>
+<span class="fc" id="L96">            return Result.success(&quot;接单成功&quot;);</span>
+<span class="fc" id="L97">        } catch (Exception e) {</span>
+<span class="fc" id="L98">            return Result.error(e.getMessage());</span>
+        }
+    }
+
+    @PostMapping(&quot;/{id}/complete&quot;)
+    public Result&lt;String&gt; completeTask(@PathVariable Long id) {
+        try {
+<span class="fc" id="L105">            taskService.completeTask(id);</span>
+<span class="fc" id="L106">            return Result.success(&quot;任务已完成，积分已划转&quot;);</span>
+<span class="nc" id="L107">        } catch (Exception e) {</span>
+<span class="nc" id="L108">            return Result.error(e.getMessage());</span>
+        }
+    }
+
+    @PostMapping(&quot;/{id}/cancel&quot;)
+    public Result&lt;String&gt; cancelTask(@PathVariable Long id, HttpServletRequest request) {
+        try {
+<span class="nc" id="L115">            Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="nc" id="L116">            taskService.cancelTask(id, userId);</span>
+<span class="nc" id="L117">            return Result.success(&quot;任务已取消&quot;);</span>
+<span class="nc" id="L118">        } catch (Exception e) {</span>
+<span class="nc" id="L119">            return Result.error(e.getMessage());</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

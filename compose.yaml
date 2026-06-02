@@ -1,43 +1,63 @@
 services:
   frontend:
-    build: 
+    build:
       context: ./frontend
-      target: builder # 停留在 Node 构建阶段以便运行开发服务器
-    # 覆盖默认启动命令，开启 Vite 热重载并监听所有网络接口
-    command: npm run dev -- --host 0.0.0.0
+      dockerfile: Dockerfile
+    container_name: help-frontend
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules # 匿名卷，防止本地覆盖容器内的依赖
+      - "5173:8080"
     environment:
       - VITE_API_URL=http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
   backend:
-    build: ./backend/help
+    build:
+      context: ./backend/help
+      dockerfile: Dockerfile
+    container_name: help-backend
     ports:
       - "8080:8080"
     environment:
-      # 配置 Spring Boot 连接到 postgres 容器
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/myapp
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=dev123
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/help_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${DB_ROOT_PASSWORD}
+      - AI_API_KEY=${AI_API_KEY}
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-network
 
   db:
-    image: postgres:17-alpine
+    image: mysql:8.0
+    container_name: help-mysql
+    ports:
+      - "3306:3306"
     environment:
-      POSTGRES_PASSWORD: dev123
-      POSTGRES_DB: myapp
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: help_db
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
       interval: 5s
       timeout: 5s
       retries: 5
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
 
 volumes:
-  pgdata:
+  mysql_dev_data:
+    name: edbf335e892fdcf83909758b6126e47c90de3869f5d06dec46782e5183cf44d1
+    external: true
+networks:
+  app-network:
+    driver: bridge

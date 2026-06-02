@@ -15,8 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { Coins, Award, TrendingUp, Edit, Save, X, Bell, HelpCircle, Settings, History } from "lucide-react";
+import { Coins, Award, Edit, Save, X, Bell, Settings, History } from "lucide-react";
 import { toast } from "sonner";
+import { userApi } from "../../api/user";
 
 export function Profile() {
   const { user } = useAuth();
@@ -28,15 +29,23 @@ export function Profile() {
     phone: user?.phone || '',
   });
 
-  const handleSave = () => {
-    toast.success('个人信息已更新');
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await userApi.updateProfile({
+        name: editForm.name,
+        email: editForm.email,
+        phone: editForm.phone,
+      });
+      toast.success('个人信息已更新');
+      setIsEditing(false);
+    } catch {
+      toast.error('更新失败，请重试');
+    }
   };
 
   const stats = [
     { label: '当前积分', value: user?.points || 0, icon: Coins, color: 'text-[#FF7D00]', bg: 'bg-orange-50' },
-    { label: '信用分', value: 98, icon: Award, color: 'text-[#52C41A]', bg: 'bg-green-50' },
-    { label: '完成任务', value: 12, icon: TrendingUp, color: 'text-[#165DFF]', bg: 'bg-blue-50' },
+    { label: '信誉分', value: user?.creditScore ?? 100, icon: Award, color: 'text-[#52C41A]', bg: 'bg-green-50' },
   ];
 
   const menuItems = [
@@ -52,17 +61,11 @@ export function Profile() {
       description: '查看系统通知和私信',
       action: () => navigate('/messages')
     },
-    { 
-      icon: HelpCircle, 
-      label: '帮助中心', 
-      description: '使用指南和常见问题',
-      action: () => toast.info('帮助中心开发中')
-    },
-    { 
-      icon: Settings, 
-      label: '账号设置', 
+    {
+      icon: Settings,
+      label: '账号设置',
       description: '修改密码、隐私设置',
-      action: () => toast.info('账号设置开发中')
+      action: () => navigate('/profile/settings')
     },
   ];
 
@@ -104,7 +107,7 @@ export function Profile() {
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <span className="w-16 shrink-0">手机</span>
-                  <span>{user?.phone}</span>
+                  <span>{user?.phone || '未填写'}</span>
                 </div>
               </div>
             </CardContent>
@@ -137,7 +140,7 @@ export function Profile() {
           <Card>
             <CardHeader>
               <CardTitle>功能中心</CardTitle>
-              <CardDescription>快捷访问常用���能</CardDescription>
+              <CardDescription>快捷访问常用功能</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
@@ -167,31 +170,14 @@ export function Profile() {
             </CardContent>
           </Card>
 
-          {/* 最近活动 */}
+          {/* 最近活动 - 后续从积分流水获取 */}
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>最近活动</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { action: '完成任务', task: '高数题目讲解', points: '+50', time: '2小时前' },
-                  { action: '发布需求', task: '帮忙代取快递', points: '-20', time: '5小时前' },
-                  { action: '接取任务', task: 'PPT设计美化', points: '0', time: '1天前' },
-                ].map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">{activity.action}</div>
-                      <div className="text-sm text-gray-500">{activity.task}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`font-semibold ${activity.points.startsWith('+') ? 'text-[#52C41A]' : activity.points.startsWith('-') ? 'text-[#FF5252]' : 'text-gray-500'}`}>
-                        {activity.points !== '0' && activity.points}
-                      </div>
-                      <div className="text-xs text-gray-500">{activity.time}</div>
-                    </div>
-                  </div>
-                ))}
+              <div className="text-center py-8 text-gray-500 text-sm">
+                前往<Button variant="link" className="p-0 h-auto text-[#165DFF]" onClick={() => navigate('/points-history')}>积分明细</Button>查看完整记录
               </div>
             </CardContent>
           </Card>

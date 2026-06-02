@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AiServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">help-backend</a> &gt; <a href="index.source.html" class="el_package">com.help.service.impl</a> &gt; <span class="el_source">AiServiceImpl.java</span></div><h1>AiServiceImpl.java</h1><pre class="source lang-java linenums">package com.help.service.impl;
+
+import com.help.service.AiService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+<span class="fc" id="L19">public class AiServiceImpl implements AiService {</span>
+
+    @Value(&quot;${ai.api-key}&quot;)
+    private String apiKey;
+
+    @Value(&quot;${ai.base-url}&quot;)
+    private String baseUrl;
+
+    @Value(&quot;${ai.model}&quot;)
+    private String model;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Override
+    public String getPageSummary(String pageContext) {
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">        if (apiKey == null || apiKey.isEmpty()) {</span>
+<span class="fc" id="L36">            throw new RuntimeException(&quot;系统未配置 AI API KEY，请联系管理员&quot;);</span>
+        }
+
+<span class="fc" id="L39">        String url = baseUrl + &quot;/chat/completions&quot;;</span>
+
+        // 1. 设置请求头
+<span class="fc" id="L42">        HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L43">        headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L44">        headers.setBearerAuth(apiKey); // 自动添加 Authorization: Bearer xxx</span>
+
+        // 2. 构造 Prompt 提示词（遵循前端文档要求）
+<span class="fc" id="L47">        String prompt = &quot;你是一个校园积分互助平台的新手引导助手。用户现在正在访问【&quot; + pageContext + &quot;】页面。请用一小段话（50字左右）友好地向用户概括这个页面的主要功能和可以进行的操作。&quot;;</span>
+
+        // 3. 构造请求体参数 (OpenAI 格式)
+<span class="fc" id="L50">        Map&lt;String, Object&gt; body = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L51">        body.put(&quot;model&quot;, model);</span>
+
+<span class="fc" id="L53">        List&lt;Map&lt;String, String&gt;&gt; messages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L54">        Map&lt;String, String&gt; userMessage = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L55">        userMessage.put(&quot;role&quot;, &quot;user&quot;);</span>
+<span class="fc" id="L56">        userMessage.put(&quot;content&quot;, prompt);</span>
+<span class="fc" id="L57">        messages.add(userMessage);</span>
+
+<span class="fc" id="L59">        body.put(&quot;messages&quot;, messages);</span>
+
+        // 4. 发起 HTTP POST 请求
+<span class="fc" id="L62">        HttpEntity&lt;Map&lt;String, Object&gt;&gt; entity = new HttpEntity&lt;&gt;(body, headers);</span>
+
+        try {
+<span class="fc" id="L65">            ResponseEntity&lt;Map&gt; response = restTemplate.postForEntity(url, entity, Map.class);</span>
+<span class="fc" id="L66">            Map&lt;String, Object&gt; responseBody = response.getBody();</span>
+
+            // 5. 解析 DeepSeek 返回的结果
+<span class="pc bpc" id="L69" title="2 of 4 branches missed.">            if (responseBody != null &amp;&amp; responseBody.containsKey(&quot;choices&quot;)) {</span>
+<span class="fc" id="L70">                List&lt;Map&lt;String, Object&gt;&gt; choices = (List&lt;Map&lt;String, Object&gt;&gt;) responseBody.get(&quot;choices&quot;);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">                if (!choices.isEmpty()) {</span>
+<span class="fc" id="L72">                    Map&lt;String, Object&gt; message = (Map&lt;String, Object&gt;) choices.get(0).get(&quot;message&quot;);</span>
+<span class="fc" id="L73">                    return (String) message.get(&quot;content&quot;);</span>
+                }
+            }
+<span class="fc" id="L76">        } catch (Exception e) {</span>
+<span class="fc" id="L77">            e.printStackTrace();</span>
+<span class="fc" id="L78">            throw new RuntimeException(&quot;AI 接口调用失败：&quot; + e.getMessage());</span>
+<span class="nc" id="L79">        }</span>
+
+<span class="nc" id="L81">        return &quot;抱歉，AI 暂时无法提供页面概括。&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

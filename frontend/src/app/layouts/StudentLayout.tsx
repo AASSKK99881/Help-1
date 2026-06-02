@@ -10,12 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import { Home, ListTodo, PlusCircle, User, Bell, LogOut } from "lucide-react";
-import { Badge } from "../components/ui/badge";
+import { Home, ListTodo, PlusCircle, User, Bell, LogOut, CalendarDays } from "lucide-react";
 import { useEffect } from "react";
-
-// ✨ 新增：引入我们刚刚写好的 AI 组件
-import { AIPageSummary } from "../components/AIPageSummary";
 
 export function StudentLayout() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -38,17 +34,6 @@ export function StudentLayout() {
   };
 
   const isActive = (path: string) => location.pathname === path;
-
-  // ✨ 新增：将路由路径映射为中文页面名称，传给 AI 模型使用
-  const getPageName = (pathname: string) => {
-    if (pathname.includes('/my-tasks')) return '我的委托';
-    if (pathname.includes('/create-task')) return '发布需求';
-    if (pathname.includes('/messages')) return '消息通知';
-    if (pathname.includes('/profile')) return '个人中心';
-    if (pathname.includes('/points-history')) return '积分明细';
-    if (pathname.includes('/task')) return '任务详情';
-    return '首页大厅';
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
@@ -83,12 +68,21 @@ export function StudentLayout() {
                 </Button>
               </Link>
               <Link to="/create-task">
-                <Button 
+                <Button
                   variant={isActive('/create-task') ? "default" : "ghost"}
                   className={isActive('/create-task') ? "bg-[#165DFF] hover:bg-[#0E4FD4]" : ""}
                 >
                   <PlusCircle className="w-4 h-4 mr-2" />
                   发布需求
+                </Button>
+              </Link>
+              <Link to="/activities">
+                <Button
+                  variant={isActive('/activities') ? "default" : "ghost"}
+                  className={isActive('/activities') ? "bg-[#165DFF] hover:bg-[#0E4FD4]" : ""}
+                >
+                  <CalendarDays className="w-4 h-4 mr-2" />
+                  校园活动
                 </Button>
               </Link>
             </nav>
@@ -97,9 +91,7 @@ export function StudentLayout() {
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/messages')} className="relative">
               <Bell className="w-5 h-5" />
-              <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center bg-[#FF5252] text-white border-0">
-                3
-              </Badge>
+              {/* 通知数量后续从后端获取 */}
             </Button>
 
             <DropdownMenu>
@@ -142,9 +134,6 @@ export function StudentLayout() {
       <main className="max-w-7xl mx-auto px-6 py-6">
         <Outlet />
       </main>
-
-      {/* ✨ 新增：把 AI 助手挂载到全局页面的最外层（因为它带有 fixed 定位） */}
-      <AIPageSummary pageName={getPageName(location.pathname)} />
     </div>
   );
 }

@@ -9,6 +9,8 @@ import { MyTasks } from "./pages/student/MyTasks";
 import { Profile } from "./pages/student/Profile";
 import { PointsHistory } from "./pages/student/PointsHistory";
 import { Messages } from "./pages/student/Messages";
+import { Activities } from "./pages/student/Activities";
+import { Settings } from "./pages/student/Settings";
 import { AdminLogin } from "./pages/admin/Login";
 import { AdminDashboard } from "./pages/admin/Dashboard";
 import { UserManagement } from "./pages/admin/UserManagement";
@@ -28,6 +30,8 @@ export const router = createBrowserRouter([
       { path: "profile", element: <Profile /> },
       { path: "points-history", element: <PointsHistory /> },
       { path: "messages", element: <Messages /> },
+      { path: "activities", element: <Activities /> },
+      { path: "profile/settings", element: <Settings /> },
     ],
   },
   {

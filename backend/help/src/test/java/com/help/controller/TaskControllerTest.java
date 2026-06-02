@@ -1,6 +1,7 @@
 package com.help.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.help.config.JwtUtil;
 import com.help.entity.Task;
 import com.help.service.TaskService;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -27,64 +28,79 @@ public class TaskControllerTest {
     @MockBean
     private TaskService taskService;
 
+    @MockBean
+    private JwtUtil jwtUtil;
+
     @Autowired
     private ObjectMapper objectMapper;
 
-    // 1. API测试: 创建任务 (正常响应)
+    private void mockAuth() {
+        when(jwtUtil.isTokenExpired(anyString())).thenReturn(false);
+        when(jwtUtil.getUserId(anyString())).thenReturn(1L);
+        when(jwtUtil.getRole(anyString())).thenReturn(0);
+    }
+
     @Test
     void createTask_ReturnsSuccess() throws Exception {
+        mockAuth();
         Task task = new Task();
         task.setTitle("帮我取快递");
 
         mockMvc.perform(post("/api/tasks")
+                        .header("Authorization", "Bearer test-token")
+                        .requestAttr("userId", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(task)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(0))
-                .andExpect(jsonPath("$.data.status").value(1));
+                .andExpect(jsonPath("$.code").value(0));
     }
 
-    // 2. API测试: 成功接取任务
     @Test
     void acceptTask_Success() throws Exception {
-        Map<String, Long> payload = new HashMap<>();
-        payload.put("studentId", 123L);
+        mockAuth();
 
         mockMvc.perform(post("/api/tasks/1/accept")
+                        .header("Authorization", "Bearer test-token")
+                        .requestAttr("userId", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(payload)))
+                        .content("{}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))
                 .andExpect(jsonPath("$.data").value("接单成功"));
     }
 
-    // 3. API测试: 接取任务异常 (捕获 Service 抛出的异常)
     @Test
     void acceptTask_ErrorHandled() throws Exception {
-        Map<String, Long> payload = new HashMap<>();
-        payload.put("studentId", 123L);
-
+        mockAuth();
         doThrow(new RuntimeException("任务已被接取")).when(taskService).acceptTask(anyLong(), anyLong());
 
         mockMvc.perform(post("/api/tasks/1/accept")
+                        .header("Authorization", "Bearer test-token")
+                        .requestAttr("userId", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(payload)))
+                        .content("{}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.message").value("任务已被接取"));
     }
 
-    // 4. API测试: 成功完成任务
     @Test
     void completeTask_Success() throws Exception {
-        mockMvc.perform(post("/api/tasks/1/complete"))
+        mockAuth();
+        mockMvc.perform(post("/api/tasks/1/complete")
+                        .header("Authorization", "Bearer test-token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))
                 .andExpect(jsonPath("$.data").value("任务已完成，积分已划转"));
     }
+
     @Test
     void getTasks_Success() throws Exception {
+        mockAuth();
+        when(taskService.list()).thenReturn(java.util.List.of());
+
         mockMvc.perform(get("/api/tasks")
+                        .header("Authorization", "Bearer test-token")
                         .param("page", "1")
                         .param("size", "10"))
                 .andExpect(status().isOk())

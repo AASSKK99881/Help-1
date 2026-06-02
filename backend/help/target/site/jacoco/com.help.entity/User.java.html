@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">help-backend</a> &gt; <a href="index.source.html" class="el_package">com.help.entity</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.help.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import java.time.LocalDateTime;
+
+<span class="pc bnc" id="L10" title="All 78 branches missed.">@Data</span>
+@TableName(&quot;user&quot;) // ⚠️ 必须改为单数 user，与数据库真实表名保持一致
+public class User {
+    @TableId(type = IdType.AUTO)
+<span class="fc" id="L14">    private Long id;</span>
+
+<span class="fc" id="L16">    private String username; // 用于存学号 (studentId)</span>
+
+    // 👇 新增：用于接收前端传来的真实姓名和邮箱
+<span class="fc" id="L19">    private String name;</span>
+<span class="fc" id="L20">    private String email;</span>
+
+    @JsonIgnore
+<span class="fc" id="L23">    private String password;</span>
+<span class="fc" id="L24">    private Integer role;</span>
+<span class="fc" id="L25">    private Integer points;</span>
+<span class="fc" id="L26">    private Integer status; // 0正常, 1封禁</span>
+<span class="fc" id="L27">    private LocalDateTime createdAt;</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

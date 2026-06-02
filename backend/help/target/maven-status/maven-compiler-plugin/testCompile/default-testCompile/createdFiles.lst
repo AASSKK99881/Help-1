@@ -1,0 +1,4 @@
+com\help\HelpApplicationTests.class
+com\help\service\TaskServiceImplTest.class
+com\help\controller\AuthControllerTest.class
+com\help\controller\TaskControllerTest.class
