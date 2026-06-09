@@ -3,7 +3,7 @@
 姓名：纪嘉乐
 学号：2312190109
 角色：前端
-日期：2026-06-02
+日期：2026-06-02（更新于 2026-06-03）
 
 ## 我完成的工作
 
@@ -30,6 +30,18 @@
 
 3. **问题**: 前端 Docker 容器内 nginx 以 root 运行，存在安全风险。
    **解决**: Dockerfile 中添加 `USER nginx`，nginx.conf 中 `pid /tmp/nginx.pid` 解决非 root 用户无法写 /var/run 的问题。
+
+4. **问题**: 前端 Vite 构建时 `VITE_API_URL` 未注入，打包后 API baseURL 为空，登录报 `Invalid URL`。
+   **解决**: 在 Dockerfile 构建阶段增加 `ARG VITE_API_URL` + `ENV VITE_API_URL`，compose.server.yaml 将 `environment` 改为 `build.args` 传入，确保 Vite 构建时可读取环境变量。
+
+5. **问题**: 容器启动后登录报 500，后台日志显示 `Table 'help_db.user' doesn't exist`——MySQL 容器是全新创建的，MyBatis-Plus 无自动建表功能，6 张业务表均不存在。
+   **解决**: 通过 `docker exec` 逐表执行 CREATE TABLE，建了 user / activities / tasks / points_logs / activity_participants / sensitive_words 共 6 张表，并插入 admin 和 test001 两条测试用户数据。
+
+6. **问题**: 插入的中文测试数据在前端页面显示为乱码（如 `æµ`）。
+   **解决**: JDBC 连接串修正为 `characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci`，重新插入数据时指定 `--default-character-set=utf8mb4`，解决双向乱码问题。
+
+7. **问题**: ECS 仅 2 核 2G 内存，Docker 构建（尤其 Maven/Vite 并行编译）时内存耗尽，系统无响应。
+   **解决**: 通过 `fallocate -l 1G /swapfile` 建立 1GB swap，并写入 `/etc/fstab` 确保持久化，构建不再 OOM。
 
 ---
 
