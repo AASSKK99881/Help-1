@@ -3,12 +3,12 @@
 姓名：纪嘉乐
 学号：2312190109
 角色：前端
-日期：2026-05-19
+日期：2026-05-19（更新于 2026-06-03）
 
 ## 我完成的工作
 
 ### 1. Dockerfile 编写
-- [✔] **前端 Dockerfile（多阶段构建）**: 完善了前端的 `node:18-alpine` 编译 + `nginx:alpine` 部署的多阶段构建。修复了 nginx 阶段缺少非 root 用户运行的问题——通过将监听端口改为 8080 并切换至 `nginx` 用户，实现沙箱化运行。
+- [✔] **前端 Dockerfile（多阶段构建）**: 完善了前端的 `node:18-alpine` 编译 + `nginx:alpine` 部署的多阶段构建。修复了 nginx 阶段缺少非 root 用户运行的问题——通过将监听端口改为 8080 并切换至 `nginx` 用户，实现沙箱化运行。后续修复了 Vite 构建时 `VITE_API_URL` 环境变量未注入的问题——在 Dockerfile 中增加 `ARG VITE_API_URL` 和 `ENV VITE_API_URL=$VITE_API_URL`，配合 Compose 的 build args 传入 API 地址。
 - [x] **后端 Dockerfile**: 审查并确认后端 `eclipse-temurin:17` 多阶段构建已正确配置非 root `spring` 用户。
 - [✔] **.dockerignore 文件**: 审查前后端 .dockerignore，确认排除了 node_modules、.git、.env 等无关和敏感文件。
 
@@ -35,6 +35,9 @@
 
 2. **问题**: 生产环境数据库密码不应硬编码在 compose 文件中。
    **解决**: 在 compose.prod.yaml 中使用 Docker Secrets 机制，通过 `/run/secrets/db_password` 文件挂载方式注入密码，配合 `MYSQL_ROOT_PASSWORD_FILE` 环境变量。
+
+3. **问题**: 前端 Vite 构建时 `VITE_API_URL` 作为 compose runtime environment 传入，但 Vite 只在构建时读取 `VITE_` 变量，导致前端打包后 API 地址为空，登录时报 `Failed to construct 'URL': Invalid URL`。
+   **解决**: 在 Dockerfile 构建阶段增加 `ARG VITE_API_URL` + `ENV VITE_API_URL=$VITE_API_URL`，同时在 compose.server.yaml 中将 `environment` 改为 `build.args` 方式传入，确保变量在 `npx vite build` 时可用。
 
 ---
 
