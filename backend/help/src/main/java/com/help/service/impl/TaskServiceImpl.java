@@ -67,10 +67,19 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         log.setTaskId(taskId);
         log.setAmount(task.getPointsReward());
         log.setType("任务奖励");
+        log.setDescription("完成任务获得积分奖励");
         log.setCreatedAt(LocalDateTime.now());
         pointsLogMapper.insert(log);
 
-        // 积分已在审核时扣除，完成时不再重复记录
+        // 发布者确认完成日志（积分已在审核时扣除）
+        PointsLog confirmLog = new PointsLog();
+        confirmLog.setUserId(task.getPublisherId());
+        confirmLog.setTaskId(taskId);
+        confirmLog.setAmount(0);
+        confirmLog.setType("任务完成");
+        confirmLog.setDescription("任务已被完成");
+        confirmLog.setCreatedAt(LocalDateTime.now());
+        pointsLogMapper.insert(confirmLog);
     }
 
     @Override
