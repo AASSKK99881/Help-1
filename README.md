@@ -1,6 +1,6 @@
-[![CI](https://github.com/AASSKK99881/HELP-1/actions/workflows/ci.yml/badge.svg)](https://github.com/AASSKK99881/HELP-1/actions)
-[![Backend Coverage](https://codecov.io/gh/AASSKK99881/HELP-1/branch/main/graph/badge.svg?flag=backend)](https://codecov.io/gh/AASSKK99881/HELP-1)
-[![Frontend Coverage](https://codecov.io/gh/AASSKK99881/HELP-1/branch/main/graph/badge.svg?flag=frontend)](https://codecov.io/gh/AASSKK99881/HELP-1)
+[![CI](https://github.com/AASSKK99881/Help-1/actions/workflows/ci.yml/badge.svg)](https://github.com/AASSKK99881/Help-1/actions)
+[![Backend Coverage](https://codecov.io/gh/AASSKK99881/Help-1/branch/main/graph/badge.svg?flag=backend)](https://codecov.io/gh/AASSKK99881/Help-1)
+[![Frontend Coverage](https://codecov.io/gh/AASSKK99881/Help-1/branch/main/graph/badge.svg?flag=frontend)](https://codecov.io/gh/AASSKK99881/Help-1)
 
 
 

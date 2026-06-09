@@ -3,7 +3,7 @@
 姓名：纪嘉乐
 学号：2312190109
 角色：前端
-日期：2026-06-02（更新于 2026-06-03）
+日期：2026-06-03
 
 ## 我完成的工作
 
@@ -15,8 +15,8 @@
 ### 2. 部署配置
 - [✔] **compose.server.yaml**: 编写了服务器专用 Compose 文件，前端映射 80 端口、后端 8080 端口、MySQL 3306 端口，配置健康检查和自动重启
 - [✔] **环境变量配置**: 通过 `.env` 文件管理 DB_ROOT_PASSWORD 和 AI_API_KEY，与代码分离，不提交到 Git
-- [×] **前后端 Dockerfile**: 前端多阶段构建（Node 构建 + Nginx 部署，非 root 用户运行）；后端 Maven 阿里云镜像加速 + Temurin JRE 运行
-- [×] **nginx.conf**: 非 root 用户运行，pid 写入 /tmp/，适配 Docker 容器环境
+- [✔] **前后端 Dockerfile**: 前端多阶段构建（Node 构建 + Nginx 部署，非 root 用户运行，修复了 VITE_API_URL ARG/ENV 注入）；后端 Maven 阿里云镜像加速 + Temurin JRE 运行
+- [✔] **nginx.conf**: 非 root 用户运行，pid 写入 /tmp/，适配 Docker 容器环境
 
 ### 3. 部署文档
 - [✔] **deployment.md**: 编写了完整的阿里云 ECS 部署说明，包含服务器选型、Docker 安装、部署步骤、安全组配置、健康验证和常见问题排查
@@ -54,6 +54,7 @@
   1. 提供了 compose.server.yaml 的完整配置（健康检查、网络、数据卷）
   2. 协助排查了安全组端口放行和 external 数据卷的问题
   3. 给出了 nginx.conf 非 root 运行的解决方案
+  4. 排查了 VITE_API_URL 构建时注入失败、数据库表缺失、中文乱码和 OOM 等 4 个生产环境问题
 
 ---
 

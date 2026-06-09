@@ -26,6 +26,8 @@ jobs:
           context: ./frontend
           push: true
           tags: ghcr.io/${{ github.repository }}/frontend:latest
+          build-args: |
+            VITE_API_URL=http://121.199.22.22:8080/api
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
