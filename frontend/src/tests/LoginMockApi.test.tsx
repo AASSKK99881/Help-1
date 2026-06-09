@@ -72,7 +72,7 @@ describe('Mock API 深度测试 - 验证页面在不同请求状态下的表现'
 
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledTimes(1);
-      expect(toast.error).toHaveBeenCalledWith('登录失败，请检查邮箱或密码');
+      expect(toast.error).toHaveBeenCalledWith('登录失败，请检查账号或密码');
 
       expect(toast.success).not.toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -103,7 +103,7 @@ describe('Mock API 深度测试 - 验证页面在不同请求状态下的表现'
     fireEvent.click(screen.getByRole('button', { name: /立即登录/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('登录失败，请检查邮箱或密码');
+      expect(toast.error).toHaveBeenCalledWith('登录失败，请检查账号或密码');
     });
   });
 });

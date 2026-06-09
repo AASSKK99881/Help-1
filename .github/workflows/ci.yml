@@ -5,6 +5,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   backend:
     runs-on: ubuntu-latest
@@ -36,7 +39,7 @@ jobs:
 
       - name: Run Maven Tests & Generate Coverage
         working-directory: backend/help
-        run: ./mvnw -B clean test
+        run: chmod +x ./mvnw && ./mvnw -B clean test
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/help_db
           SPRING_DATASOURCE_USERNAME: root
