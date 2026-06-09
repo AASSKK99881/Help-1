@@ -11,7 +11,8 @@ RUN npm config set registry https://registry.npmmirror.com/
 RUN npm install
 # 复制所有前端源码
 COPY . .
-# 🎯 核心修改：直接使用 vite 打包，跳过烦人的 TypeScript 严格检查
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN npx vite build
 
 # === 阶段二：Nginx 部署阶段 ===
