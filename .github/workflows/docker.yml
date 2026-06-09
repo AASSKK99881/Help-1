@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
@@ -28,8 +31,6 @@ jobs:
           tags: ghcr.io/${{ github.repository }}/frontend:latest
           build-args: |
             VITE_API_URL=http://121.199.22.22:8080/api
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Scan frontend for vulnerabilities
         uses: aquasecurity/trivy-action@master
@@ -58,8 +59,6 @@ jobs:
           context: ./backend/help
           push: true
           tags: ghcr.io/${{ github.repository }}/backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Scan backend for vulnerabilities
         uses: aquasecurity/trivy-action@master
