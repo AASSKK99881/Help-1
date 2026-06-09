@@ -8,26 +8,26 @@
 ## 我完成的工作
 
 ### 1. 日志配置
-- [x] **结构化日志格式**: 审查并确认后端 `logback-spring.xml` 使用 LogstashEncoder 输出 JSON 格式日志，支持控制台和文件双输出。
-- [x] **日志级别配置**: 根日志级别设为 INFO，文件按天滚动保留 7 天。
+- [✔] **结构化日志格式**: 审查并确认后端 `logback-spring.xml` 使用 LogstashEncoder 输出 JSON 格式日志，支持控制台和文件双输出。
+- [✔] **日志级别配置**: 根日志级别设为 INFO，文件按天滚动保留 7 天。
 
 ### 2. 健康检查
-- [x] **/health 端点**: 审查 `HealthController` 返回 `{"status":"healthy","timestamp":"...","version":"1.0.0"}`。
-- [x] **Docker 健康检查**: 在 compose.yaml 和 compose.prod.yaml 中配置了基于 `/health` 的 wget 轮询检查。
+- [✔] **/health 端点**: 审查 `HealthController` 返回 `{"status":"healthy","timestamp":"...","version":"1.0.0"}`。
+- [✔] **Docker 健康检查**: 在 compose.yaml 和 compose.prod.yaml 中配置了基于 `/health` 的 wget 轮询检查。
 
 ### 3. 指标收集
-- [x] **请求计数**: `MetricsInterceptor` 使用 `AtomicLong` 线程安全计数。
-- [x] **响应时间**: 通过 `ThreadLocal` 记录请求开始时间，`afterCompletion` 计算耗时。
-- [x] **错误率**: 统计 status >= 400 的请求，计算百分比。
-- [x] **指标查询**: `/metrics` 端点返回 JSON 格式的指标数据。
+- [✔] **请求计数**: `MetricsInterceptor` 使用 `AtomicLong` 线程安全计数。
+- [✔] **响应时间**: 通过 `ThreadLocal` 记录请求开始时间，`afterCompletion` 计算耗时。
+- [✔] **错误率**: 统计 status >= 400 的请求，计算百分比。
+- [✔] **指标查询**: `/metrics` 端点返回 JSON 格式的指标数据。
 
 ### 4. 文档
-- [x] **monitoring.md**: 编写了完整的监控配置说明文档，包含端点、日志格式、指标说明和告警阈值建议。
+- [✔] **monitoring.md**: 编写了完整的监控配置说明文档，包含端点、日志格式、指标说明和告警阈值建议。
 
 ---
 
 ## PR 链接
-- PR #X: https://github.com/AASSKK99881/Help-1/pull/X (根据实际 PR 填写)
+- PR #X: https://github.com/AASSKK99881/Help-1/pull/
 
 ---
 

@@ -3,7 +3,7 @@
 姓名：纪嘉乐
 学号：2312190109
 角色：前端
-日期：2026-06-02
+日期：2026-06-02（更新于 2026-06-03）
 
 ## 我完成的工作
 
@@ -15,22 +15,11 @@
 ### 2. 部署配置
 - [✔] **compose.server.yaml**: 编写了服务器专用 Compose 文件，前端映射 80 端口、后端 8080 端口、MySQL 3306 端口，配置健康检查和自动重启
 - [✔] **环境变量配置**: 通过 `.env` 文件管理 DB_ROOT_PASSWORD 和 AI_API_KEY，与代码分离，不提交到 Git
-- [✔] **前后端 Dockerfile**: 前端多阶段构建（Node 构建 + Nginx 部署，非 root 用户运行）；后端 Maven 阿里云镜像加速 + Temurin JRE 运行
-- [✔] **nginx.conf**: 非 root 用户运行，pid 写入 /tmp/，适配 Docker 容器环境
+- [×] **前后端 Dockerfile**: 前端多阶段构建（Node 构建 + Nginx 部署，非 root 用户运行）；后端 Maven 阿里云镜像加速 + Temurin JRE 运行
+- [×] **nginx.conf**: 非 root 用户运行，pid 写入 /tmp/，适配 Docker 容器环境
 
 ### 3. 部署文档
 - [✔] **deployment.md**: 编写了完整的阿里云 ECS 部署说明，包含服务器选型、Docker 安装、部署步骤、安全组配置、健康验证和常见问题排查
-
----
-
-## PR 链接
-- PR #X: https://github.com/AASSKK99881/Help-1/pull/X (根据实际 PR 填写)
-
-## 在线地址
-- 前端: http://<ECS公网IP> (待部署后填写)
-- 后端: http://<ECS公网IP>:8080/health (待部署后填写)
-
----
 
 ## 遇到的问题和解决
 1. **问题**: 阿里云安全组默认不开放 80 和 8080 端口，部署后外网无法访问。
@@ -41,6 +30,18 @@
 
 3. **问题**: 前端 Docker 容器内 nginx 以 root 运行，存在安全风险。
    **解决**: Dockerfile 中添加 `USER nginx`，nginx.conf 中 `pid /tmp/nginx.pid` 解决非 root 用户无法写 /var/run 的问题。
+
+4. **问题**: 前端 Vite 构建时 `VITE_API_URL` 未注入，打包后 API baseURL 为空，登录报 `Invalid URL`。
+   **解决**: 在 Dockerfile 构建阶段增加 `ARG VITE_API_URL` + `ENV VITE_API_URL`，compose.server.yaml 将 `environment` 改为 `build.args` 传入，确保 Vite 构建时可读取环境变量。
+
+5. **问题**: 容器启动后登录报 500，后台日志显示 `Table 'help_db.user' doesn't exist`——MySQL 容器是全新创建的，MyBatis-Plus 无自动建表功能，6 张业务表均不存在。
+   **解决**: 通过 `docker exec` 逐表执行 CREATE TABLE，建了 user / activities / tasks / points_logs / activity_participants / sensitive_words 共 6 张表，并插入 admin 和 test001 两条测试用户数据。
+
+6. **问题**: 插入的中文测试数据在前端页面显示为乱码（如 `æµ`）。
+   **解决**: JDBC 连接串修正为 `characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci`，重新插入数据时指定 `--default-character-set=utf8mb4`，解决双向乱码问题。
+
+7. **问题**: ECS 仅 2 核 2G 内存，Docker 构建（尤其 Maven/Vite 并行编译）时内存耗尽，系统无响应。
+   **解决**: 通过 `fallocate -l 1G /swapfile` 建立 1GB swap，并写入 `/etc/fstab` 确保持久化，构建不再 OOM。
 
 ---
 
