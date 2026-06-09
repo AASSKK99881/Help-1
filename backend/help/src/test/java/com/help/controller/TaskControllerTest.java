@@ -3,6 +3,7 @@ package com.help.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.help.config.JwtUtil;
 import com.help.entity.Task;
+import com.help.mapper.UserMapper;
 import com.help.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class TaskControllerTest {
 
     @MockBean
     private JwtUtil jwtUtil;
+
+    @MockBean
+    private UserMapper userMapper;
 
     @Autowired
     private ObjectMapper objectMapper;
