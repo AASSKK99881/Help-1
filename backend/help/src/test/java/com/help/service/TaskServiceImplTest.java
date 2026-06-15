@@ -89,14 +89,8 @@ public class TaskServiceImplTest {
         mockUser.setPoints(100);
         mockUser.setCreditScore(100);
 
-        User mockPublisher = new User();
-        mockPublisher.setId(2L);
-        mockPublisher.setPoints(200);
-        mockPublisher.setCreditScore(100);
-
         when(taskMapper.selectById(1L)).thenReturn(mockTask);
         when(userMapper.selectById(3L)).thenReturn(mockUser);
-        when(userMapper.selectById(2L)).thenReturn(mockPublisher);
 
         taskService.completeTask(1L);
 

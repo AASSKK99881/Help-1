@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentActivityController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">help-backend</a> &gt; <a href="index.source.html" class="el_package">com.help.controller</a> &gt; <span class="el_source">StudentActivityController.java</span></div><h1>StudentActivityController.java</h1><pre class="source lang-java linenums">package com.help.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.help.common.Result;
+import com.help.entity.*;
+import com.help.mapper.*;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+@CrossOrigin
+<span class="fc" id="L17">public class StudentActivityController {</span>
+
+    @Autowired private ActivityMapper activityMapper;
+    @Autowired private ActivityParticipantMapper participantMapper;
+    @Autowired private UserMapper userMapper;
+
+    @GetMapping(&quot;/activities&quot;)
+    public Result&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; listActivities() {
+<span class="nc" id="L25">        List&lt;Activity&gt; activities = activityMapper.selectList(</span>
+<span class="nc" id="L26">                new QueryWrapper&lt;Activity&gt;().eq(&quot;status&quot;, 0).orderByDesc(&quot;created_at&quot;));</span>
+<span class="nc" id="L27">        List&lt;Map&lt;String, Object&gt;&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        for (Activity a : activities) {</span>
+<span class="nc" id="L29">            Map&lt;String, Object&gt; m = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L30">            m.put(&quot;id&quot;, a.getId());</span>
+<span class="nc" id="L31">            m.put(&quot;title&quot;, a.getTitle());</span>
+<span class="nc" id="L32">            m.put(&quot;description&quot;, a.getDescription());</span>
+<span class="nc" id="L33">            m.put(&quot;location&quot;, a.getLocation());</span>
+<span class="nc" id="L34">            m.put(&quot;startTime&quot;, a.getStartTime());</span>
+<span class="nc" id="L35">            m.put(&quot;endTime&quot;, a.getEndTime());</span>
+<span class="nc" id="L36">            m.put(&quot;requiredCount&quot;, a.getRequiredCount());</span>
+<span class="nc" id="L37">            m.put(&quot;pointsReward&quot;, a.getPointsReward());</span>
+<span class="nc" id="L38">            long approved = participantMapper.selectCount(</span>
+<span class="nc" id="L39">                    new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, a.getId()).eq(&quot;status&quot;, 1));</span>
+<span class="nc" id="L40">            m.put(&quot;approvedCount&quot;, approved);</span>
+<span class="nc" id="L41">            result.add(m);</span>
+<span class="nc" id="L42">        }</span>
+<span class="nc" id="L43">        return Result.success(result);</span>
+    }
+
+    @PostMapping(&quot;/activities/{id}/apply&quot;)
+    public Result&lt;String&gt; apply(@PathVariable Long id, HttpServletRequest request) {
+<span class="nc" id="L48">        Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="nc" id="L49">        Activity a = activityMapper.selectById(id);</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">        if (a == null || a.getStatus() != 0) return Result.error(&quot;活动不可报名&quot;);</span>
+
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (participantMapper.selectCount(</span>
+<span class="nc" id="L53">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId)) &gt; 0) {</span>
+<span class="nc" id="L54">            return Result.error(&quot;已报名过该活动&quot;);</span>
+        }
+
+<span class="nc" id="L57">        User u = userMapper.selectById(userId);</span>
+<span class="nc" id="L58">        ActivityParticipant p = new ActivityParticipant();</span>
+<span class="nc" id="L59">        p.setActivityId(id);</span>
+<span class="nc" id="L60">        p.setUserId(userId);</span>
+<span class="nc" id="L61">        p.setStatus(0);</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        p.setCreditScore(u != null ? u.getCreditScore() : 100);</span>
+<span class="nc" id="L63">        participantMapper.insert(p);</span>
+<span class="nc" id="L64">        return Result.success(&quot;报名成功，等待审核&quot;);</span>
+    }
+
+    @GetMapping(&quot;/user/my-activities&quot;)
+    public Result&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; myActivities(HttpServletRequest request) {
+<span class="nc" id="L69">        Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="nc" id="L70">        List&lt;ActivityParticipant&gt; parts = participantMapper.selectList(</span>
+<span class="nc" id="L71">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;user_id&quot;, userId));</span>
+
+<span class="nc" id="L73">        List&lt;Map&lt;String, Object&gt;&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        for (ActivityParticipant p : parts) {</span>
+<span class="nc" id="L75">            Activity a = activityMapper.selectById(p.getActivityId());</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (a == null) continue;</span>
+<span class="nc" id="L77">            Map&lt;String, Object&gt; m = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L78">            m.put(&quot;participantId&quot;, p.getId());</span>
+<span class="nc" id="L79">            m.put(&quot;status&quot;, p.getStatus());</span>
+<span class="nc" id="L80">            m.put(&quot;creditScore&quot;, p.getCreditScore());</span>
+<span class="nc" id="L81">            m.put(&quot;appliedAt&quot;, p.getAppliedAt());</span>
+<span class="nc" id="L82">            m.put(&quot;activityId&quot;, a.getId());</span>
+<span class="nc" id="L83">            m.put(&quot;title&quot;, a.getTitle());</span>
+<span class="nc" id="L84">            m.put(&quot;location&quot;, a.getLocation());</span>
+<span class="nc" id="L85">            m.put(&quot;startTime&quot;, a.getStartTime());</span>
+<span class="nc" id="L86">            m.put(&quot;pointsReward&quot;, a.getPointsReward());</span>
+            String statusLabel;
+<span class="nc bnc" id="L88" title="All 4 branches missed.">            switch (p.getStatus()) {</span>
+<span class="nc" id="L89">                case 0: statusLabel = &quot;待审核&quot;; break;</span>
+<span class="nc" id="L90">                case 1: statusLabel = &quot;已入选&quot;; break;</span>
+<span class="nc" id="L91">                case 2: statusLabel = &quot;已完成&quot;; break;</span>
+<span class="nc" id="L92">                default: statusLabel = &quot;已放弃&quot;;</span>
+            }
+<span class="nc" id="L94">            m.put(&quot;statusLabel&quot;, statusLabel);</span>
+<span class="nc" id="L95">            result.add(m);</span>
+<span class="nc" id="L96">        }</span>
+<span class="nc" id="L97">        return Result.success(result);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
