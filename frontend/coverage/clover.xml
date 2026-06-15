@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1781533217948" clover="3.2.0">
+  <project timestamp="1781533217948" name="All files">
+    <metrics statements="347" coveredstatements="295" conditionals="176" coveredconditionals="122" methods="175" coveredmethods="130" elements="698" coveredelements="547" complexity="0" loc="347" ncloc="347" packages="4" files="31" classes="31"/>
+    <package name="api">
+      <metrics statements="44" coveredstatements="41" conditionals="14" coveredconditionals="13" methods="22" coveredmethods="19"/>
+      <file name="activities.ts" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\api\activities.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+      </file>
+      <file name="auth.ts" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\api\auth.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+      </file>
+      <file name="client.ts" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\api\client.ts">
+        <metrics statements="22" coveredstatements="22" conditionals="14" coveredconditionals="13" methods="4" coveredmethods="4"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="15" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="31" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="46" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="49" count="5" type="stmt"/>
+      </file>
+      <file name="tasks.ts" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\api\tasks.ts">
+        <metrics statements="9" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="5"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="74" count="1" type="stmt"/>
+      </file>
+      <file name="user.ts" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\api\user.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="components">
+      <metrics statements="13" coveredstatements="12" conditionals="9" coveredconditionals="7" methods="7" coveredmethods="6"/>
+      <file name="PointsBadge.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\PointsBadge.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="10" count="3" type="stmt"/>
+      </file>
+      <file name="TaskCard.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\TaskCard.tsx">
+        <metrics statements="5" coveredstatements="4" conditionals="4" coveredconditionals="2" methods="4" coveredmethods="3"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="56" count="7" type="stmt"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+      </file>
+      <file name="TaskStatusBadge.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\TaskStatusBadge.tsx">
+        <metrics statements="7" coveredstatements="7" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="22" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.ui">
+      <metrics statements="61" coveredstatements="52" conditionals="14" coveredconditionals="12" methods="46" coveredmethods="37"/>
+      <file name="alert.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\alert.tsx">
+        <metrics statements="4" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="27" count="41" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="54" count="41" type="stmt"/>
+      </file>
+      <file name="avatar.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\avatar.tsx">
+        <metrics statements="4" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="12" count="10" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="41" count="10" type="stmt"/>
+      </file>
+      <file name="badge.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\badge.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="3" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="35" count="43" type="cond" truecount="1" falsecount="1"/>
+        <line num="37" count="43" type="stmt"/>
+      </file>
+      <file name="button.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\button.tsx">
+        <metrics statements="5" coveredstatements="5" conditionals="3" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="7" count="12" type="stmt"/>
+        <line num="43" count="12" type="stmt"/>
+        <line num="45" count="474" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="474" type="stmt"/>
+        <line num="55" count="12" type="stmt"/>
+      </file>
+      <file name="card.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\card.tsx">
+        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="5"/>
+        <line num="6" count="299" type="stmt"/>
+        <line num="19" count="166" type="stmt"/>
+        <line num="32" count="166" type="stmt"/>
+        <line num="42" count="147" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="65" count="299" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+      </file>
+      <file name="checkbox.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\checkbox.tsx">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="13" count="35" type="stmt"/>
+      </file>
+      <file name="dialog.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\dialog.tsx">
+        <metrics statements="11" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="8"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="12" count="59" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="24" count="59" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="37" count="12" type="stmt"/>
+        <line num="54" count="59" type="stmt"/>
+        <line num="76" count="10" type="stmt"/>
+        <line num="86" count="10" type="stmt"/>
+        <line num="102" count="10" type="stmt"/>
+        <line num="115" count="10" type="stmt"/>
+      </file>
+      <file name="input.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\input.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="491" type="stmt"/>
+      </file>
+      <file name="label.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\label.tsx">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="7" type="stmt"/>
+        <line num="12" count="614" type="stmt"/>
+      </file>
+      <file name="select.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\select.tsx">
+        <metrics statements="11" coveredstatements="8" conditionals="6" coveredconditionals="6" methods="10" coveredmethods="7"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="16" count="41" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="28" count="41" type="stmt"/>
+        <line num="39" count="41" type="stmt"/>
+        <line num="63" count="41" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="110" count="246" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="146" count="41" type="stmt"/>
+        <line num="164" count="41" type="stmt"/>
+      </file>
+      <file name="separator.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\separator.tsx">
+        <metrics statements="2" coveredstatements="2" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="14" count="10" type="stmt"/>
+      </file>
+      <file name="switch.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\switch.tsx">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="12" count="41" type="stmt"/>
+      </file>
+      <file name="tabs.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\tabs.tsx">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="12" count="85" type="stmt"/>
+        <line num="25" count="85" type="stmt"/>
+        <line num="41" count="179" type="stmt"/>
+        <line num="57" count="152" type="stmt"/>
+      </file>
+      <file name="textarea.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\textarea.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="41" type="stmt"/>
+      </file>
+      <file name="utils.ts" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\components\ui\utils.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="5" count="4028" type="stmt"/>
+      </file>
+    </package>
+    <package name="pages.student">
+      <metrics statements="229" coveredstatements="190" conditionals="139" coveredconditionals="90" methods="100" coveredmethods="68"/>
+      <file name="Activities.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\Activities.tsx">
+        <metrics statements="18" coveredstatements="18" conditionals="16" coveredconditionals="14" methods="9" coveredmethods="9"/>
+        <line num="10" count="20" type="stmt"/>
+        <line num="11" count="20" type="stmt"/>
+        <line num="12" count="20" type="stmt"/>
+        <line num="14" count="20" type="stmt"/>
+        <line num="15" count="8" type="stmt"/>
+        <line num="16" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="20" count="20" type="stmt"/>
+        <line num="22" count="20" type="stmt"/>
+        <line num="23" count="3" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="28" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="32" count="20" type="stmt"/>
+        <line num="46" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="12" type="stmt"/>
+        <line num="70" count="3" type="stmt"/>
+      </file>
+      <file name="CreateTask.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\CreateTask.tsx">
+        <metrics statements="29" coveredstatements="26" conditionals="14" coveredconditionals="10" methods="10" coveredmethods="7"/>
+        <line num="23" count="41" type="stmt"/>
+        <line num="24" count="41" type="stmt"/>
+        <line num="25" count="41" type="stmt"/>
+        <line num="26" count="41" type="stmt"/>
+        <line num="35" count="41" type="stmt"/>
+        <line num="36" count="5" type="stmt"/>
+        <line num="38" count="5" type="stmt"/>
+        <line num="39" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="46" count="4" type="stmt"/>
+        <line num="55" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="57" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="4" type="stmt"/>
+        <line num="73" count="41" type="stmt"/>
+        <line num="88" count="6" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="118" count="5" type="stmt"/>
+        <line num="134" count="5" type="stmt"/>
+        <line num="148" count="5" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="181" count="1" type="stmt"/>
+      </file>
+      <file name="Login.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\Login.tsx">
+        <metrics statements="37" coveredstatements="34" conditionals="12" coveredconditionals="8" methods="13" coveredmethods="12"/>
+        <line num="14" count="63" type="stmt"/>
+        <line num="15" count="63" type="stmt"/>
+        <line num="25" count="63" type="stmt"/>
+        <line num="27" count="63" type="stmt"/>
+        <line num="28" count="63" type="stmt"/>
+        <line num="30" count="63" type="stmt"/>
+        <line num="31" count="53" type="cond" truecount="2" falsecount="2"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="63" type="cond" truecount="2" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="40" count="63" type="stmt"/>
+        <line num="41" count="4" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="47" count="2" type="stmt"/>
+        <line num="51" count="63" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="53" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="59" count="3" type="stmt"/>
+        <line num="60" count="3" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="73" count="63" type="stmt"/>
+        <line num="112" count="5" type="stmt"/>
+        <line num="127" count="5" type="stmt"/>
+        <line num="145" count="4" type="stmt"/>
+        <line num="154" count="4" type="stmt"/>
+        <line num="165" count="4" type="stmt"/>
+        <line num="175" count="4" type="stmt"/>
+        <line num="185" count="4" type="stmt"/>
+        <line num="192" count="5" type="stmt"/>
+        <line num="224" count="0" type="stmt"/>
+      </file>
+      <file name="Messages.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\Messages.tsx">
+        <metrics statements="25" coveredstatements="9" conditionals="26" coveredconditionals="3" methods="16" coveredmethods="2"/>
+        <line num="19" count="5" type="stmt"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="42" count="5" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="54" count="5" type="stmt"/>
+        <line num="55" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="7" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="122" count="5" type="stmt"/>
+      </file>
+      <file name="MyTasks.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\MyTasks.tsx">
+        <metrics statements="53" coveredstatements="45" conditionals="33" coveredconditionals="27" methods="21" coveredmethods="15"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="28" count="22" type="stmt"/>
+        <line num="29" count="22" type="stmt"/>
+        <line num="30" count="22" type="stmt"/>
+        <line num="31" count="22" type="stmt"/>
+        <line num="32" count="22" type="stmt"/>
+        <line num="33" count="22" type="stmt"/>
+        <line num="34" count="22" type="stmt"/>
+        <line num="36" count="22" type="stmt"/>
+        <line num="37" count="9" type="stmt"/>
+        <line num="38" count="9" type="stmt"/>
+        <line num="42" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="43" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="49" count="22" type="stmt"/>
+        <line num="51" count="22" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="56" count="22" type="stmt"/>
+        <line num="57" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="68" count="22" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="73" count="22" type="stmt"/>
+        <line num="74" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="85" count="22" type="stmt"/>
+        <line num="86" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="87" count="6" type="stmt"/>
+        <line num="89" count="6" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="139" count="1" type="stmt"/>
+        <line num="143" count="1" type="stmt"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="162" count="22" type="stmt"/>
+        <line num="180" count="6" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="193" count="3" type="stmt"/>
+        <line num="197" count="0" type="stmt"/>
+        <line num="220" count="0" type="stmt"/>
+        <line num="239" count="0" type="stmt"/>
+      </file>
+      <file name="PointsHistory.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\PointsHistory.tsx">
+        <metrics statements="18" coveredstatements="15" conditionals="20" coveredconditionals="16" methods="12" coveredmethods="10"/>
+        <line num="11" count="9" type="stmt"/>
+        <line num="12" count="9" type="stmt"/>
+        <line num="13" count="9" type="stmt"/>
+        <line num="14" count="9" type="stmt"/>
+        <line num="15" count="9" type="stmt"/>
+        <line num="17" count="9" type="stmt"/>
+        <line num="18" count="5" type="stmt"/>
+        <line num="19" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="23" count="9" type="stmt"/>
+        <line num="24" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="9" type="stmt"/>
+        <line num="29" count="9" type="stmt"/>
+        <line num="31" count="9" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="89" count="5" type="stmt"/>
+      </file>
+      <file name="Profile.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\Profile.tsx">
+        <metrics statements="26" coveredstatements="20" conditionals="12" coveredconditionals="6" methods="13" coveredmethods="7"/>
+        <line num="23" count="11" type="stmt"/>
+        <line num="24" count="11" type="stmt"/>
+        <line num="25" count="11" type="stmt"/>
+        <line num="26" count="11" type="stmt"/>
+        <line num="32" count="11" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="46" count="11" type="stmt"/>
+        <line num="51" count="11" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="72" count="11" type="stmt"/>
+        <line num="94" count="3" type="stmt"/>
+        <line num="122" count="20" type="stmt"/>
+        <line num="123" count="20" type="stmt"/>
+        <line num="148" count="30" type="stmt"/>
+        <line num="149" count="30" type="stmt"/>
+        <line num="180" count="0" type="stmt"/>
+        <line num="202" count="1" type="stmt"/>
+        <line num="211" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="224" count="1" type="stmt"/>
+      </file>
+      <file name="Settings.tsx" path="C:\Users\jjl05\Desktop\Help-1\frontend\src\app\pages\student\Settings.tsx">
+        <metrics statements="23" coveredstatements="23" conditionals="6" coveredconditionals="6" methods="6" coveredmethods="6"/>
+        <line num="12" count="33" type="stmt"/>
+        <line num="13" count="33" type="stmt"/>
+        <line num="14" count="33" type="stmt"/>
+        <line num="16" count="33" type="stmt"/>
+        <line num="17" count="5" type="stmt"/>
+        <line num="18" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="22" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="41" count="33" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="70" count="6" type="stmt"/>
+        <line num="81" count="6" type="stmt"/>
+        <line num="93" count="6" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
