@@ -36,8 +36,8 @@ import java.util.concurrent.atomic.AtomicLong;
 <span class="fc" id="L36">        totalResponseTime.addAndGet(duration);</span>
 
 <span class="fc" id="L38">        int status = response.getStatus();</span>
-<span class="pc bpc" id="L39" title="2 of 4 branches missed.">        if (status &gt;= 400 || ex != null) {</span>
-<span class="nc" id="L40">            errorRequests.incrementAndGet();</span>
+<span class="fc bfc" id="L39" title="All 4 branches covered.">        if (status &gt;= 400 || ex != null) {</span>
+<span class="fc" id="L40">            errorRequests.incrementAndGet();</span>
         }
 
 <span class="fc" id="L43">        logger.info(&quot;method={} uri={} status={} durationMs={}&quot;,</span>
@@ -45,21 +45,21 @@ import java.util.concurrent.atomic.AtomicLong;
 <span class="fc" id="L45">    }</span>
 
     public long getTotalRequests() {
-<span class="nc" id="L48">        return totalRequests.get();</span>
+<span class="fc" id="L48">        return totalRequests.get();</span>
     }
 
     public long getErrorRequests() {
-<span class="nc" id="L52">        return errorRequests.get();</span>
+<span class="fc" id="L52">        return errorRequests.get();</span>
     }
 
     public double getAverageResponseTime() {
-<span class="nc" id="L56">        long total = totalRequests.get();</span>
-<span class="nc bnc" id="L57" title="All 2 branches missed.">        return total == 0 ? 0 : (double) totalResponseTime.get() / total;</span>
+<span class="fc" id="L56">        long total = totalRequests.get();</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        return total == 0 ? 0 : (double) totalResponseTime.get() / total;</span>
     }
 
     public double getErrorRate() {
-<span class="nc" id="L61">        long total = totalRequests.get();</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">        return total == 0 ? 0 : (double) errorRequests.get() / total * 100;</span>
+<span class="fc" id="L61">        long total = totalRequests.get();</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        return total == 0 ? 0 : (double) errorRequests.get() / total * 100;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

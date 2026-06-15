@@ -11,14 +11,14 @@ import java.util.Map;
 
     @GetMapping(&quot;/&quot;)
     public String healthCheck() {
-<span class="nc" id="L14">        return &quot;OK&quot;;</span>
+<span class="fc" id="L14">        return &quot;OK&quot;;</span>
     }
 
     @GetMapping(&quot;/health&quot;)
     public Map&lt;String, Object&gt; health() {
-<span class="nc" id="L19">        return Map.of(</span>
+<span class="fc" id="L19">        return Map.of(</span>
             &quot;status&quot;, &quot;healthy&quot;,
-<span class="nc" id="L21">            &quot;timestamp&quot;, Instant.now().toString(),</span>
+<span class="fc" id="L21">            &quot;timestamp&quot;, Instant.now().toString(),</span>
             &quot;version&quot;, &quot;1.0.0&quot;
         );
     }

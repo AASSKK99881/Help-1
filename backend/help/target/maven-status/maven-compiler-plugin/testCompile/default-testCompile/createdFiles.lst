@@ -1,4 +1,13 @@
-com\help\HelpApplicationTests.class
 com\help\service\TaskServiceImplTest.class
-com\help\controller\AuthControllerTest.class
+com\help\controller\StudentActivityControllerTest.class
 com\help\controller\TaskControllerTest.class
+com\help\HelpApplicationTests.class
+com\help\service\TaskServiceImplMoreTest.class
+com\help\config\JwtUtilTest.class
+com\help\controller\UserControllerTest.class
+com\help\controller\AuthControllerTest.class
+com\help\config\MetricsInterceptorTest.class
+com\help\common\ResultTest.class
+com\help\config\AdminInterceptorTest.class
+com\help\controller\HealthControllerTest.class
+com\help\config\AuthInterceptorTest.class
