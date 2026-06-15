@@ -31,7 +31,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/help-1/frontend:latest
+          tags: ghcr.io/${{ github.repository_owner | lower }}/help-1/frontend:latest
           build-args: |
             VITE_API_URL=http://121.199.22.22:8080/api
           cache-from: type=gha
@@ -40,7 +40,7 @@ jobs:
       - name: Scan frontend for vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/help-1/frontend:latest
+          image-ref: ghcr.io/${{ github.repository_owner | lower }}/help-1/frontend:latest
           severity: CRITICAL,HIGH
 
   build-backend:
@@ -66,12 +66,12 @@ jobs:
         with:
           context: ./backend/help
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/help-1/backend:latest
+          tags: ghcr.io/${{ github.repository_owner | lower }}/help-1/backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Scan backend for vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/help-1/backend:latest
+          image-ref: ghcr.io/${{ github.repository_owner | lower }}/help-1/backend:latest
           severity: CRITICAL,HIGH
