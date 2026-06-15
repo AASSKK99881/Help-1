@@ -1,7 +1,11 @@
 target/
 .git
 .gitignore
+.env
+.env.*
 *.md
 .idea
 *.iml
 .DS_Store
+src/test/
+logs/

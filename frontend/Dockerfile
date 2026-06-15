@@ -1,28 +1,34 @@
-# === 阶段一：Node 构建阶段 ===
-FROM node:18-alpine AS builder
+# === 阶段 1: 构建阶段 ===
+FROM node:20-alpine AS builder
 WORKDIR /app
-# 复制 package.json
+
+# 分层缓存依赖
 COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-# 设置淘宝镜像加速
-RUN npm config set registry https://registry.npmmirror.com/
-
-# 安装依赖
-RUN npm install
-# 复制所有前端源码
+# 复制源码并构建
 COPY . .
-ARG VITE_API_URL
+ARG VITE_API_URL=http://localhost:8080/api
 ENV VITE_API_URL=$VITE_API_URL
 RUN npx vite build
 
-# === 阶段二：Nginx 部署阶段 ===
-FROM nginx:alpine
-# 把第一阶段打包好的 dist 文件拷贝到 Nginx 的静态资源目录
+# === 阶段 2: 运行阶段（Nginx） ===
+FROM nginx:1.27-alpine
+
+# 复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
-# 自定义 nginx 配置：非特权端口 8080，非 root 运行，pid 路径可写
+
+# 自定义 nginx 配置：pid 路径可写，非 80 端口
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/conf.d/default.conf \
+RUN sed -i 's/listen\s*80;/listen 8080;/g' /etc/nginx/conf.d/default.conf \
+    && sed -i 's#root\s*/usr/share/nginx/html;#root /usr/share/nginx/html;\n    try_files $uri $uri/ /index.html;#g' /etc/nginx/conf.d/default.conf \
     && chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/run /tmp /etc/nginx/conf.d
+
+# 非 root 运行
 USER nginx
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+    CMD wget -qO- http://localhost:8080/ || exit 1
+
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

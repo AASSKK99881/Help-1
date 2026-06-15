@@ -26,3 +26,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Docker 密钥文件（绝对不能提交！）
+secrets/db_password.txt
+secrets/ai_api_key.txt
