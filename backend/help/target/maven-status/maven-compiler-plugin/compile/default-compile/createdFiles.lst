@@ -3,6 +3,7 @@ com\help\controller\AdminController.class
 com\help\config\WebMvcConfig.class
 com\help\config\AdminInterceptor.class
 com\help\controller\TaskController.class
+com\help\config\GlobalExceptionHandler.class
 com\help\entity\User.class
 com\help\mapper\TaskMapper.class
 com\help\entity\PointsLog.class

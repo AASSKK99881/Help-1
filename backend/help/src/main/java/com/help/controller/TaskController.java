@@ -1,6 +1,7 @@
 package com.help.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.help.common.Result;
 import com.help.entity.Task;
 import com.help.entity.User;
@@ -42,11 +43,12 @@ public class TaskController {
         }
         wrapper.orderByDesc("created_at");
 
-        List<Task> tasks = taskService.list(wrapper);
+        Page<Task> taskPage = new Page<>(page, size);
+        taskPage = taskService.page(taskPage, wrapper);
 
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("total", tasks.size());
-        responseData.put("list", tasks);
+        responseData.put("total", taskPage.getTotal());
+        responseData.put("list", taskPage.getRecords());
 
         return Result.success(responseData);
     }

@@ -1,5 +1,6 @@
 package com.help.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.help.config.JwtUtil;
 import com.help.entity.Task;
@@ -101,7 +102,7 @@ public class TaskControllerTest {
     @Test
     void getTasks_Success() throws Exception {
         mockAuth();
-        when(taskService.list()).thenReturn(java.util.List.of());
+        when(taskService.page(any(Page.class), any())).thenReturn(new Page<>(1, 10));
 
         mockMvc.perform(get("/api/tasks")
                         .header("Authorization", "Bearer test-token")

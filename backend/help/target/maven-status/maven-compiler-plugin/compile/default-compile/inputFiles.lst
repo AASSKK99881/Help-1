@@ -27,6 +27,7 @@ C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\config\Metrics
 C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\config\WebMvcConfig.java
 C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\mapper\UserMapper.java
 C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\service\TaskService.java
+C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\config\GlobalExceptionHandler.java
 C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\entity\PointsLog.java
 C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\controller\StudentActivityController.java
 C:\Users\jjl05\Desktop\Help-1\backend\help\src\main\java\com\help\service\impl\AiServiceImpl.java

@@ -100,14 +100,13 @@ public class AiServiceImpl implements AiService {
                 }
             }
         } catch (Exception e) {
-            // AI 调用失败时默认通过，避免阻塞正常流程
-            result.put("passed", true);
-            result.put("reason", "AI服务异常，默认通过");
+            result.put("passed", false);
+            result.put("reason", "AI服务异常，转人工审核");
             return result;
         }
 
-        result.put("passed", true);
-        result.put("reason", "AI未返回有效结果，默认通过");
+        result.put("passed", false);
+        result.put("reason", "AI未返回有效结果，转人工审核");
         return result;
     }
 }

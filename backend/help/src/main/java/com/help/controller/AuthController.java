@@ -6,6 +6,8 @@ import com.help.config.JwtUtil;
 import com.help.entity.User;
 import com.help.mapper.UserMapper;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,8 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @CrossOrigin
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private UserMapper userMapper;
@@ -44,6 +48,8 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
 
+        user.setPassword(null);
+
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
         data.put("user", user);
@@ -53,40 +59,32 @@ public class AuthController {
 
     @PostMapping("/register")
     public Result<String> register(@RequestBody Map<String, String> registerReq) {
-        try {
-            String name = registerReq.get("name");
-            String studentId = registerReq.get("studentId");
-            String email = registerReq.get("contactInfo");
-            String rawPassword = registerReq.get("password");
+        String name = registerReq.get("name");
+        String studentId = registerReq.get("studentId");
+        String email = registerReq.get("contactInfo");
+        String rawPassword = registerReq.get("password");
 
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("username", studentId);
-            if (userMapper.selectCount(queryWrapper) > 0) {
-                throw new RuntimeException("该学号已被注册！");
-            }
-
-            User user = new User();
-            user.setUsername(studentId);
-            user.setName(name);
-            user.setEmail(email);
-
-            String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
-            user.setPassword(hashedPassword);
-
-            user.setRole(0);
-            user.setPoints(100); // 新用户注册赠送初始积分
-            user.setCreatedAt(LocalDateTime.now());
-
-            userMapper.insert(user);
-
-            return Result.success("注册成功");
-
-        } catch (Exception e) {
-            System.err.println("\n================= 捕捉到注册崩溃 =================");
-            System.err.println("真正导致 500 错误的原因是：");
-            System.err.println(e.getMessage());
-            System.err.println("========================================================\n");
-            throw new RuntimeException("注册失败");
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", studentId);
+        if (userMapper.selectCount(queryWrapper) > 0) {
+            throw new RuntimeException("该学号已被注册！");
         }
+
+        User user = new User();
+        user.setUsername(studentId);
+        user.setName(name);
+        user.setEmail(email);
+
+        String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+
+        user.setRole(0);
+        user.setPoints(100);
+        user.setCreatedAt(LocalDateTime.now());
+
+        userMapper.insert(user);
+
+        log.info("新用户注册成功: {}", studentId);
+        return Result.success("注册成功");
     }
 }

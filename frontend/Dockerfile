@@ -4,7 +4,7 @@ WORKDIR /app
 
 # 分层缓存依赖
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci && npm cache clean --force
 
 # 复制源码并构建
 COPY . .

@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-<span class="fc" id="L21">public class AiServiceImpl implements AiService {</span>
+<span class="nc" id="L21">public class AiServiceImpl implements AiService {</span>
 
     @Value(&quot;${ai.api-key}&quot;)
     private String apiKey;
@@ -100,15 +100,14 @@ import java.util.stream.Collectors;
                 }
             }
 <span class="nc" id="L102">        } catch (Exception e) {</span>
-            // AI 调用失败时默认通过，避免阻塞正常流程
-<span class="nc" id="L104">            result.put(&quot;passed&quot;, true);</span>
-<span class="nc" id="L105">            result.put(&quot;reason&quot;, &quot;AI服务异常，默认通过&quot;);</span>
-<span class="nc" id="L106">            return result;</span>
-<span class="nc" id="L107">        }</span>
+<span class="nc" id="L103">            result.put(&quot;passed&quot;, false);</span>
+<span class="nc" id="L104">            result.put(&quot;reason&quot;, &quot;AI服务异常，转人工审核&quot;);</span>
+<span class="nc" id="L105">            return result;</span>
+<span class="nc" id="L106">        }</span>
 
-<span class="nc" id="L109">        result.put(&quot;passed&quot;, true);</span>
-<span class="nc" id="L110">        result.put(&quot;reason&quot;, &quot;AI未返回有效结果，默认通过&quot;);</span>
-<span class="nc" id="L111">        return result;</span>
+<span class="nc" id="L108">        result.put(&quot;passed&quot;, false);</span>
+<span class="nc" id="L109">        result.put(&quot;reason&quot;, &quot;AI未返回有效结果，转人工审核&quot;);</span>
+<span class="nc" id="L110">        return result;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
