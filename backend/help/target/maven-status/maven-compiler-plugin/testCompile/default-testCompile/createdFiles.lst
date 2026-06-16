@@ -1,6 +1,10 @@
 com\help\service\TaskServiceImplTest.class
+com\help\config\GlobalExceptionHandlerTest.class
+com\help\controller\AdminActivityControllerTest.class
 com\help\controller\StudentActivityControllerTest.class
 com\help\controller\TaskControllerTest.class
+com\help\service\AiServiceImplTest.class
+com\help\controller\AdminControllerTest.class
 com\help\HelpApplicationTests.class
 com\help\service\TaskServiceImplMoreTest.class
 com\help\config\JwtUtilTest.class

@@ -41,29 +41,29 @@ import java.util.Map;
 
     @GetMapping(&quot;/tasks/pending&quot;)
     public Result&lt;Map&lt;String, Object&gt;&gt; getPendingTasks() {
-<span class="nc" id="L44">        List&lt;Task&gt; tasks = taskService.getPendingTasks();</span>
-<span class="nc" id="L45">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L46">        data.put(&quot;total&quot;, tasks.size());</span>
-<span class="nc" id="L47">        data.put(&quot;list&quot;, tasks);</span>
-<span class="nc" id="L48">        return Result.success(data);</span>
+<span class="fc" id="L44">        List&lt;Task&gt; tasks = taskService.getPendingTasks();</span>
+<span class="fc" id="L45">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L46">        data.put(&quot;total&quot;, tasks.size());</span>
+<span class="fc" id="L47">        data.put(&quot;list&quot;, tasks);</span>
+<span class="fc" id="L48">        return Result.success(data);</span>
     }
 
     @PostMapping(&quot;/tasks/{id}/approve&quot;)
     public Result&lt;String&gt; approveTask(@PathVariable Long id) {
         try {
-<span class="nc" id="L54">            taskService.approveTask(id);</span>
-<span class="nc" id="L55">            return Result.success(&quot;审核通过&quot;);</span>
-<span class="nc" id="L56">        } catch (Exception e) {</span>
-<span class="nc" id="L57">            return Result.error(e.getMessage());</span>
+<span class="fc" id="L54">            taskService.approveTask(id);</span>
+<span class="fc" id="L55">            return Result.success(&quot;审核通过&quot;);</span>
+<span class="fc" id="L56">        } catch (Exception e) {</span>
+<span class="fc" id="L57">            return Result.error(e.getMessage());</span>
         }
     }
 
     @PostMapping(&quot;/tasks/{id}/reject&quot;)
     public Result&lt;String&gt; rejectTask(@PathVariable Long id, @RequestBody Map&lt;String, String&gt; body) {
         try {
-<span class="nc" id="L64">            String reason = body.getOrDefault(&quot;reason&quot;, &quot;未说明原因&quot;);</span>
-<span class="nc" id="L65">            taskService.rejectTask(id, reason);</span>
-<span class="nc" id="L66">            return Result.success(&quot;已驳回&quot;);</span>
+<span class="fc" id="L64">            String reason = body.getOrDefault(&quot;reason&quot;, &quot;未说明原因&quot;);</span>
+<span class="fc" id="L65">            taskService.rejectTask(id, reason);</span>
+<span class="fc" id="L66">            return Result.success(&quot;已驳回&quot;);</span>
 <span class="nc" id="L67">        } catch (Exception e) {</span>
 <span class="nc" id="L68">            return Result.error(e.getMessage());</span>
         }
@@ -73,154 +73,154 @@ import java.util.Map;
 
     @GetMapping(&quot;/stats&quot;)
     public Result&lt;Map&lt;String, Object&gt;&gt; getStats() {
-<span class="nc" id="L76">        List&lt;Task&gt; allTasks = taskService.list();</span>
-<span class="nc" id="L77">        List&lt;User&gt; allUsers = userMapper.selectList(null);</span>
+<span class="fc" id="L76">        List&lt;Task&gt; allTasks = taskService.list();</span>
+<span class="fc" id="L77">        List&lt;User&gt; allUsers = userMapper.selectList(null);</span>
 
-<span class="nc" id="L79">        long totalTasks = allTasks.size();</span>
-<span class="nc bnc" id="L80" title="All 2 branches missed.">        long completedTasks = allTasks.stream().filter(t -&gt; t.getStatus() == 3).count();</span>
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        long pendingReview = allTasks.stream().filter(t -&gt; t.getStatus() == 0).count();</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">        long inProgress = allTasks.stream().filter(t -&gt; t.getStatus() == 2).count();</span>
-<span class="nc" id="L83">        long todayTasks = allTasks.stream()</span>
-<span class="nc bnc" id="L84" title="All 4 branches missed.">                .filter(t -&gt; t.getCreatedAt() != null &amp;&amp; t.getCreatedAt().toLocalDate().equals(LocalDateTime.now().toLocalDate()))</span>
-<span class="nc" id="L85">                .count();</span>
+<span class="fc" id="L79">        long totalTasks = allTasks.size();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        long completedTasks = allTasks.stream().filter(t -&gt; t.getStatus() == 3).count();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        long pendingReview = allTasks.stream().filter(t -&gt; t.getStatus() == 0).count();</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        long inProgress = allTasks.stream().filter(t -&gt; t.getStatus() == 2).count();</span>
+<span class="fc" id="L83">        long todayTasks = allTasks.stream()</span>
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">                .filter(t -&gt; t.getCreatedAt() != null &amp;&amp; t.getCreatedAt().toLocalDate().equals(LocalDateTime.now().toLocalDate()))</span>
+<span class="fc" id="L85">                .count();</span>
 
-<span class="nc" id="L87">        Map&lt;String, Object&gt; stats = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L88">        stats.put(&quot;totalUsers&quot;, allUsers.size());</span>
-<span class="nc" id="L89">        stats.put(&quot;totalTasks&quot;, totalTasks);</span>
-<span class="nc" id="L90">        stats.put(&quot;completedTasks&quot;, completedTasks);</span>
-<span class="nc" id="L91">        stats.put(&quot;pendingReview&quot;, pendingReview);</span>
-<span class="nc" id="L92">        stats.put(&quot;inProgress&quot;, inProgress);</span>
-<span class="nc" id="L93">        stats.put(&quot;todayTasks&quot;, todayTasks);</span>
+<span class="fc" id="L87">        Map&lt;String, Object&gt; stats = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L88">        stats.put(&quot;totalUsers&quot;, allUsers.size());</span>
+<span class="fc" id="L89">        stats.put(&quot;totalTasks&quot;, totalTasks);</span>
+<span class="fc" id="L90">        stats.put(&quot;completedTasks&quot;, completedTasks);</span>
+<span class="fc" id="L91">        stats.put(&quot;pendingReview&quot;, pendingReview);</span>
+<span class="fc" id="L92">        stats.put(&quot;inProgress&quot;, inProgress);</span>
+<span class="fc" id="L93">        stats.put(&quot;todayTasks&quot;, todayTasks);</span>
 
-<span class="nc" id="L95">        return Result.success(stats);</span>
+<span class="fc" id="L95">        return Result.success(stats);</span>
     }
 
     // ===== 用户管理 =====
 
     @GetMapping(&quot;/users&quot;)
     public Result&lt;Map&lt;String, Object&gt;&gt; getUsers() {
-<span class="nc" id="L102">        List&lt;User&gt; users = userMapper.selectList(null);</span>
-<span class="nc" id="L103">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L104">        data.put(&quot;total&quot;, users.size());</span>
-<span class="nc" id="L105">        data.put(&quot;list&quot;, users);</span>
-<span class="nc" id="L106">        return Result.success(data);</span>
+<span class="fc" id="L102">        List&lt;User&gt; users = userMapper.selectList(null);</span>
+<span class="fc" id="L103">        Map&lt;String, Object&gt; data = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L104">        data.put(&quot;total&quot;, users.size());</span>
+<span class="fc" id="L105">        data.put(&quot;list&quot;, users);</span>
+<span class="fc" id="L106">        return Result.success(data);</span>
     }
 
     @PostMapping(&quot;/users/{id}/ban&quot;)
     public Result&lt;String&gt; banUser(@PathVariable Long id, HttpServletRequest request) {
-<span class="nc" id="L111">        Long currentUserId = (Long) request.getAttribute(&quot;userId&quot;);</span>
-<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (id == 1) return Result.error(&quot;最高管理员不可被封禁&quot;);</span>
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (id.equals(currentUserId)) return Result.error(&quot;不能封禁自己&quot;);</span>
-<span class="nc" id="L114">        User user = userMapper.selectById(id);</span>
-<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
-<span class="nc" id="L116">        user.setStatus(1);</span>
-<span class="nc" id="L117">        userMapper.updateById(user);</span>
-<span class="nc" id="L118">        return Result.success(&quot;已封禁&quot;);</span>
+<span class="fc" id="L111">        Long currentUserId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (id == 1) return Result.error(&quot;最高管理员不可被封禁&quot;);</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (id.equals(currentUserId)) return Result.error(&quot;不能封禁自己&quot;);</span>
+<span class="fc" id="L114">        User user = userMapper.selectById(id);</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
+<span class="fc" id="L116">        user.setStatus(1);</span>
+<span class="fc" id="L117">        userMapper.updateById(user);</span>
+<span class="fc" id="L118">        return Result.success(&quot;已封禁&quot;);</span>
     }
 
     @PostMapping(&quot;/users/{id}/unban&quot;)
     public Result&lt;String&gt; unbanUser(@PathVariable Long id) {
-<span class="nc" id="L123">        User user = userMapper.selectById(id);</span>
-<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
-<span class="nc" id="L125">        user.setStatus(0);</span>
-<span class="nc" id="L126">        userMapper.updateById(user);</span>
-<span class="nc" id="L127">        return Result.success(&quot;已解封&quot;);</span>
+<span class="fc" id="L123">        User user = userMapper.selectById(id);</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
+<span class="fc" id="L125">        user.setStatus(0);</span>
+<span class="fc" id="L126">        userMapper.updateById(user);</span>
+<span class="fc" id="L127">        return Result.success(&quot;已解封&quot;);</span>
     }
 
     @PostMapping(&quot;/users/{id}/points&quot;)
     public Result&lt;String&gt; adjustPoints(@PathVariable Long id, @RequestBody Map&lt;String, Object&gt; body) {
-<span class="nc" id="L132">        User user = userMapper.selectById(id);</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
+<span class="fc" id="L132">        User user = userMapper.selectById(id);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
 
-<span class="nc" id="L135">        int amount = ((Number) body.get(&quot;amount&quot;)).intValue();</span>
-<span class="nc" id="L136">        String reason = (String) body.getOrDefault(&quot;reason&quot;, &quot;管理员调整&quot;);</span>
+<span class="fc" id="L135">        int amount = ((Number) body.get(&quot;amount&quot;)).intValue();</span>
+<span class="fc" id="L136">        String reason = (String) body.getOrDefault(&quot;reason&quot;, &quot;管理员调整&quot;);</span>
 
-<span class="nc" id="L138">        user.setPoints(user.getPoints() + amount);</span>
-<span class="nc" id="L139">        userMapper.updateById(user);</span>
+<span class="fc" id="L138">        user.setPoints(user.getPoints() + amount);</span>
+<span class="fc" id="L139">        userMapper.updateById(user);</span>
 
-<span class="nc" id="L141">        PointsLog log = new PointsLog();</span>
-<span class="nc" id="L142">        log.setUserId(id);</span>
-<span class="nc" id="L143">        log.setAmount(amount);</span>
-<span class="nc" id="L144">        log.setType(&quot;管理员调整&quot;);</span>
-<span class="nc" id="L145">        log.setDescription(reason);</span>
-<span class="nc" id="L146">        log.setCreatedAt(LocalDateTime.now());</span>
-<span class="nc" id="L147">        pointsLogMapper.insert(log);</span>
+<span class="fc" id="L141">        PointsLog log = new PointsLog();</span>
+<span class="fc" id="L142">        log.setUserId(id);</span>
+<span class="fc" id="L143">        log.setAmount(amount);</span>
+<span class="fc" id="L144">        log.setType(&quot;管理员调整&quot;);</span>
+<span class="fc" id="L145">        log.setDescription(reason);</span>
+<span class="fc" id="L146">        log.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L147">        pointsLogMapper.insert(log);</span>
 
-<span class="nc" id="L149">        return Result.success(&quot;调整成功&quot;);</span>
+<span class="fc" id="L149">        return Result.success(&quot;调整成功&quot;);</span>
     }
 
     // ===== 敏感词管理 =====
 
     @GetMapping(&quot;/keywords&quot;)
     public Result&lt;List&lt;SensitiveWord&gt;&gt; getKeywords() {
-<span class="nc" id="L156">        return Result.success(sensitiveWordMapper.selectList(null));</span>
+<span class="fc" id="L156">        return Result.success(sensitiveWordMapper.selectList(null));</span>
     }
 
     @PostMapping(&quot;/keywords&quot;)
     public Result&lt;SensitiveWord&gt; addKeyword(@RequestBody Map&lt;String, String&gt; body) {
-<span class="nc" id="L161">        String word = body.get(&quot;word&quot;);</span>
-<span class="nc bnc" id="L162" title="All 4 branches missed.">        if (word == null || word.isBlank()) {</span>
-<span class="nc" id="L163">            return Result.error(&quot;关键词不能为空&quot;);</span>
+<span class="fc" id="L161">        String word = body.get(&quot;word&quot;);</span>
+<span class="pc bpc" id="L162" title="1 of 4 branches missed.">        if (word == null || word.isBlank()) {</span>
+<span class="fc" id="L163">            return Result.error(&quot;关键词不能为空&quot;);</span>
         }
         // 查重
-<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (sensitiveWordMapper.selectCount(</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        if (sensitiveWordMapper.selectCount(</span>
                 new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper&lt;SensitiveWord&gt;()
-<span class="nc" id="L168">                        .eq(&quot;word&quot;, word)) &gt; 0) {</span>
+<span class="fc" id="L168">                        .eq(&quot;word&quot;, word)) &gt; 0) {</span>
 <span class="nc" id="L169">            return Result.error(&quot;该关键词已存在&quot;);</span>
         }
-<span class="nc" id="L171">        SensitiveWord sw = new SensitiveWord();</span>
-<span class="nc" id="L172">        sw.setWord(word.trim());</span>
-<span class="nc" id="L173">        sensitiveWordMapper.insert(sw);</span>
-<span class="nc" id="L174">        return Result.success(sw);</span>
+<span class="fc" id="L171">        SensitiveWord sw = new SensitiveWord();</span>
+<span class="fc" id="L172">        sw.setWord(word.trim());</span>
+<span class="fc" id="L173">        sensitiveWordMapper.insert(sw);</span>
+<span class="fc" id="L174">        return Result.success(sw);</span>
     }
 
     @DeleteMapping(&quot;/keywords/{id}&quot;)
     public Result&lt;String&gt; deleteKeyword(@PathVariable Long id) {
-<span class="nc" id="L179">        int rows = sensitiveWordMapper.deleteById(id);</span>
-<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (rows == 0) return Result.error(&quot;关键词不存在&quot;);</span>
-<span class="nc" id="L181">        return Result.success(&quot;已删除&quot;);</span>
+<span class="fc" id="L179">        int rows = sensitiveWordMapper.deleteById(id);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (rows == 0) return Result.error(&quot;关键词不存在&quot;);</span>
+<span class="fc" id="L181">        return Result.success(&quot;已删除&quot;);</span>
     }
 
     // ===== 管理员账户管理 =====
 
     @PostMapping(&quot;/admins&quot;)
     public Result&lt;User&gt; createAdmin(@RequestBody Map&lt;String, String&gt; body) {
-<span class="nc" id="L188">        String name = body.get(&quot;name&quot;);</span>
-<span class="nc" id="L189">        String username = body.get(&quot;username&quot;);</span>
-<span class="nc" id="L190">        String password = body.get(&quot;password&quot;);</span>
+<span class="fc" id="L188">        String name = body.get(&quot;name&quot;);</span>
+<span class="fc" id="L189">        String username = body.get(&quot;username&quot;);</span>
+<span class="fc" id="L190">        String password = body.get(&quot;password&quot;);</span>
 
-<span class="nc bnc" id="L192" title="All 10 branches missed.">        if (name == null || name.isBlank() || username == null || username.isBlank()</span>
-<span class="nc bnc" id="L193" title="All 2 branches missed.">                || password == null || password.isBlank()) {</span>
+<span class="pc bpc" id="L192" title="5 of 10 branches missed.">        if (name == null || name.isBlank() || username == null || username.isBlank()</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">                || password == null || password.isBlank()) {</span>
 <span class="nc" id="L194">            return Result.error(&quot;姓名、学号和密码不能为空&quot;);</span>
         }
-<span class="nc bnc" id="L196" title="All 2 branches missed.">        if (password.length() &lt; 6) return Result.error(&quot;密码至少6位&quot;);</span>
-<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (userMapper.selectCount(new QueryWrapper&lt;User&gt;().eq(&quot;username&quot;, username)) &gt; 0) {</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (password.length() &lt; 6) return Result.error(&quot;密码至少6位&quot;);</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (userMapper.selectCount(new QueryWrapper&lt;User&gt;().eq(&quot;username&quot;, username)) &gt; 0) {</span>
 <span class="nc" id="L198">            return Result.error(&quot;该学号已存在&quot;);</span>
         }
 
-<span class="nc" id="L201">        User admin = new User();</span>
-<span class="nc" id="L202">        admin.setName(name);</span>
-<span class="nc" id="L203">        admin.setUsername(username);</span>
-<span class="nc" id="L204">        admin.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));</span>
-<span class="nc" id="L205">        admin.setRole(1);</span>
-<span class="nc" id="L206">        admin.setPoints(0);</span>
-<span class="nc" id="L207">        admin.setStatus(0);</span>
-<span class="nc" id="L208">        admin.setCreatedAt(LocalDateTime.now());</span>
-<span class="nc" id="L209">        userMapper.insert(admin);</span>
-<span class="nc" id="L210">        admin.setPassword(null);</span>
-<span class="nc" id="L211">        return Result.success(admin);</span>
+<span class="fc" id="L201">        User admin = new User();</span>
+<span class="fc" id="L202">        admin.setName(name);</span>
+<span class="fc" id="L203">        admin.setUsername(username);</span>
+<span class="fc" id="L204">        admin.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));</span>
+<span class="fc" id="L205">        admin.setRole(1);</span>
+<span class="fc" id="L206">        admin.setPoints(0);</span>
+<span class="fc" id="L207">        admin.setStatus(0);</span>
+<span class="fc" id="L208">        admin.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L209">        userMapper.insert(admin);</span>
+<span class="fc" id="L210">        admin.setPassword(null);</span>
+<span class="fc" id="L211">        return Result.success(admin);</span>
     }
 
     @DeleteMapping(&quot;/admins/{id}&quot;)
     public Result&lt;String&gt; deleteAdmin(@PathVariable Long id, HttpServletRequest request) {
-<span class="nc" id="L216">        Long currentUserId = (Long) request.getAttribute(&quot;userId&quot;);</span>
-<span class="nc bnc" id="L217" title="All 2 branches missed.">        if (id == 1) return Result.error(&quot;最高管理员不可被删除&quot;);</span>
-<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (id.equals(currentUserId)) return Result.error(&quot;不能删除自己&quot;);</span>
-<span class="nc" id="L219">        User user = userMapper.selectById(id);</span>
-<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
-<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (user.getRole() != 1) return Result.error(&quot;该用户不是管理员&quot;);</span>
-<span class="nc" id="L222">        userMapper.deleteById(id);</span>
-<span class="nc" id="L223">        return Result.success(&quot;管理员已删除&quot;);</span>
+<span class="fc" id="L216">        Long currentUserId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">        if (id == 1) return Result.error(&quot;最高管理员不可被删除&quot;);</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        if (id.equals(currentUserId)) return Result.error(&quot;不能删除自己&quot;);</span>
+<span class="fc" id="L219">        User user = userMapper.selectById(id);</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (user == null) return Result.error(&quot;用户不存在&quot;);</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if (user.getRole() != 1) return Result.error(&quot;该用户不是管理员&quot;);</span>
+<span class="fc" id="L222">        userMapper.deleteById(id);</span>
+<span class="fc" id="L223">        return Result.success(&quot;管理员已删除&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

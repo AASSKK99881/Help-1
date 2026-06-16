@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.help.service.TaskServiceImplMoreTest" time="0.105" tests="11" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.help.service.AiServiceImplTest" time="0.141" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -61,15 +61,6 @@
     <property name="java.class.version" value="61.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[help-test] "/>
   </properties>
-  <testcase name="getPendingTasks_ReturnsList" classname="com.help.service.TaskServiceImplMoreTest" time="0.065"/>
-  <testcase name="cancelTask_StatusPending_RefundFull" classname="com.help.service.TaskServiceImplMoreTest" time="0.004"/>
-  <testcase name="approveTask_InvalidStatus" classname="com.help.service.TaskServiceImplMoreTest" time="0.007"/>
-  <testcase name="rejectTask_Success" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="cancelTask_TaskNotFound" classname="com.help.service.TaskServiceImplMoreTest" time="0.004"/>
-  <testcase name="getPublishedTasks_ReturnsList" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="approveTask_Success" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="approveTask_InsufficientPoints" classname="com.help.service.TaskServiceImplMoreTest" time="0.004"/>
-  <testcase name="cancelTask_StatusInProgress_Penalty" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="getAcceptedTasks_ReturnsList" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="cancelTask_NotPublisher" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
+  <testcase name="reviewTaskContent_NoApiKey_DefaultsToPass" classname="com.help.service.AiServiceImplTest" time="0.137"/>
+  <testcase name="reviewTaskContent_NullApiKey_DefaultsToPass" classname="com.help.service.AiServiceImplTest" time="0.003"/>
 </testsuite>

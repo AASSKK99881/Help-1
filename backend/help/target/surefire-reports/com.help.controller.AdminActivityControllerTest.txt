@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.help.controller.AdminActivityControllerTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.533 s -- in com.help.controller.AdminActivityControllerTest

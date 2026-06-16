@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.help.service.TaskServiceImplMoreTest" time="0.105" tests="11" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.help.controller.AdminControllerTest" time="0.842" tests="18" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -61,15 +61,93 @@
     <property name="java.class.version" value="61.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[help-test] "/>
   </properties>
-  <testcase name="getPendingTasks_ReturnsList" classname="com.help.service.TaskServiceImplMoreTest" time="0.065"/>
-  <testcase name="cancelTask_StatusPending_RefundFull" classname="com.help.service.TaskServiceImplMoreTest" time="0.004"/>
-  <testcase name="approveTask_InvalidStatus" classname="com.help.service.TaskServiceImplMoreTest" time="0.007"/>
-  <testcase name="rejectTask_Success" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="cancelTask_TaskNotFound" classname="com.help.service.TaskServiceImplMoreTest" time="0.004"/>
-  <testcase name="getPublishedTasks_ReturnsList" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="approveTask_Success" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="approveTask_InsufficientPoints" classname="com.help.service.TaskServiceImplMoreTest" time="0.004"/>
-  <testcase name="cancelTask_StatusInProgress_Penalty" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="getAcceptedTasks_ReturnsList" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
-  <testcase name="cancelTask_NotPublisher" classname="com.help.service.TaskServiceImplMoreTest" time="0.003"/>
+  <testcase name="createAdmin_Success" classname="com.help.controller.AdminControllerTest" time="0.123">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:06.5384499+08:00","@version":"1","message":"Could not detect default configuration classes for test class [com.help.controller.AdminControllerTest]: AdminControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.","logger":"org.springframework.test.context.support.AnnotationConfigContextLoaderUtils","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:06.5508168+08:00","@version":"1","message":"Found @SpringBootConfiguration com.help.HelpApplication for test class com.help.controller.AdminControllerTest","logger":"org.springframework.boot.test.context.SpringBootTestContextBootstrapper","thread":"main","level":"INFO","level_value":20000}
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.3)
+
+{"time":"2026-06-16T12:55:06.605611+08:00","@version":"1","message":"Starting AdminControllerTest using Java 17.0.12 with PID 5332 (started by jjl05 in C:\\Users\\jjl05\\Desktop\\Help-1\\backend\\help)","logger":"com.help.controller.AdminControllerTest","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:06.605611+08:00","@version":"1","message":"No active profile set, falling back to 1 default profile: \"default\"","logger":"com.help.controller.AdminControllerTest","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:07.1146556+08:00","@version":"1","message":"Initializing Spring TestDispatcherServlet ''","logger":"org.springframework.boot.test.mock.web.SpringBootMockServletContext","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:07.1146556+08:00","@version":"1","message":"Initializing Servlet ''","logger":"org.springframework.test.web.servlet.TestDispatcherServlet","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:07.1156554+08:00","@version":"1","message":"Completed initialization in 1 ms","logger":"org.springframework.test.web.servlet.TestDispatcherServlet","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:07.1256557+08:00","@version":"1","message":"Started AdminControllerTest in 0.559 seconds (process running for 15.26)","logger":"com.help.controller.AdminControllerTest","thread":"main","level":"INFO","level_value":20000}
+{"time":"2026-06-16T12:55:07.2438912+08:00","@version":"1","message":"method=POST uri=/api/admin/admins status=200 durationMs=112","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="getStats_Success" classname="com.help.controller.AdminControllerTest" time="0.024">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.2734428+08:00","@version":"1","message":"method=GET uri=/api/admin/stats status=200 durationMs=9","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="unbanUser_Success" classname="com.help.controller.AdminControllerTest" time="0.004">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.2799738+08:00","@version":"1","message":"method=POST uri=/api/admin/users/2/unban status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="addKeyword_Success" classname="com.help.controller.AdminControllerTest" time="0.012">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.2905044+08:00","@version":"1","message":"method=POST uri=/api/admin/keywords status=200 durationMs=6","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="approveTask_ErrorHandled" classname="com.help.controller.AdminControllerTest" time="0.01">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3015177+08:00","@version":"1","message":"method=POST uri=/api/admin/tasks/99/approve status=200 durationMs=2","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="deleteKeyword_Success" classname="com.help.controller.AdminControllerTest" time="0.003">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3067477+08:00","@version":"1","message":"method=DELETE uri=/api/admin/keywords/1 status=200 durationMs=0","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="rejectTask_Success" classname="com.help.controller.AdminControllerTest" time="0.011">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3164741+08:00","@version":"1","message":"method=POST uri=/api/admin/tasks/2/reject status=200 durationMs=5","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="banUser_Success" classname="com.help.controller.AdminControllerTest" time="0.008">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3264739+08:00","@version":"1","message":"method=POST uri=/api/admin/users/2/ban status=200 durationMs=6","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="getUsers_Success" classname="com.help.controller.AdminControllerTest" time="0.003">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3309642+08:00","@version":"1","message":"method=GET uri=/api/admin/users status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="approveTask_Success" classname="com.help.controller.AdminControllerTest" time="0.003">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3349733+08:00","@version":"1","message":"method=POST uri=/api/admin/tasks/1/approve status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="deleteAdmin_Success" classname="com.help.controller.AdminControllerTest" time="0.004">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3379731+08:00","@version":"1","message":"method=DELETE uri=/api/admin/admins/3 status=200 durationMs=0","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="createAdmin_PasswordTooShort" classname="com.help.controller.AdminControllerTest" time="0.004">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3435038+08:00","@version":"1","message":"method=POST uri=/api/admin/admins status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="banUser_AdminProtected" classname="com.help.controller.AdminControllerTest" time="0.004">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3485038+08:00","@version":"1","message":"method=POST uri=/api/admin/users/1/ban status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="getKeywords_Success" classname="com.help.controller.AdminControllerTest" time="0.004">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3525041+08:00","@version":"1","message":"method=GET uri=/api/admin/keywords status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="deleteAdmin_NotAdmin" classname="com.help.controller.AdminControllerTest" time="0.003">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3560323+08:00","@version":"1","message":"method=DELETE uri=/api/admin/admins/2 status=200 durationMs=0","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="adjustPoints_Success" classname="com.help.controller.AdminControllerTest" time="0.006">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3645635+08:00","@version":"1","message":"method=POST uri=/api/admin/users/2/points status=200 durationMs=2","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="getPendingTasks_Success" classname="com.help.controller.AdminControllerTest" time="0.006">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3705637+08:00","@version":"1","message":"method=GET uri=/api/admin/tasks/pending status=200 durationMs=3","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
+  <testcase name="addKeyword_BlankWord" classname="com.help.controller.AdminControllerTest" time="0.004">
+    <system-out><![CDATA[{"time":"2026-06-16T12:55:07.3765631+08:00","@version":"1","message":"method=POST uri=/api/admin/keywords status=200 durationMs=1","logger":"com.help.config.MetricsInterceptor","thread":"main","level":"INFO","level_value":20000}
+]]></system-out>
+  </testcase>
 </testsuite>

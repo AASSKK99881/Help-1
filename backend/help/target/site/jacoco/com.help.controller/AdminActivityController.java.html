@@ -24,51 +24,51 @@ import java.util.stream.Collectors;
 
     @GetMapping
     public Result&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; listActivities() {
-<span class="nc" id="L27">        List&lt;Activity&gt; activities = activityMapper.selectList(</span>
-<span class="nc" id="L28">                new QueryWrapper&lt;Activity&gt;().orderByDesc(&quot;created_at&quot;));</span>
-<span class="nc" id="L29">        List&lt;Map&lt;String, Object&gt;&gt; result = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">        for (Activity a : activities) {</span>
-<span class="nc" id="L31">            Map&lt;String, Object&gt; m = objToMap(a);</span>
-<span class="nc" id="L32">            long count = participantMapper.selectCount(</span>
-<span class="nc" id="L33">                    new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, a.getId()).eq(&quot;status&quot;, 1));</span>
-<span class="nc" id="L34">            m.put(&quot;approvedCount&quot;, count);</span>
-<span class="nc" id="L35">            result.add(m);</span>
-<span class="nc" id="L36">        }</span>
-<span class="nc" id="L37">        return Result.success(result);</span>
+<span class="fc" id="L27">        List&lt;Activity&gt; activities = activityMapper.selectList(</span>
+<span class="fc" id="L28">                new QueryWrapper&lt;Activity&gt;().orderByDesc(&quot;created_at&quot;));</span>
+<span class="fc" id="L29">        List&lt;Map&lt;String, Object&gt;&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        for (Activity a : activities) {</span>
+<span class="fc" id="L31">            Map&lt;String, Object&gt; m = objToMap(a);</span>
+<span class="fc" id="L32">            long count = participantMapper.selectCount(</span>
+<span class="fc" id="L33">                    new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, a.getId()).eq(&quot;status&quot;, 1));</span>
+<span class="fc" id="L34">            m.put(&quot;approvedCount&quot;, count);</span>
+<span class="fc" id="L35">            result.add(m);</span>
+<span class="fc" id="L36">        }</span>
+<span class="fc" id="L37">        return Result.success(result);</span>
     }
 
     @PostMapping
     public Result&lt;Activity&gt; create(@RequestBody Activity activity) {
-<span class="nc" id="L42">        activity.setStatus(0);</span>
-<span class="nc" id="L43">        activityMapper.insert(activity);</span>
-<span class="nc" id="L44">        return Result.success(activity);</span>
+<span class="fc" id="L42">        activity.setStatus(0);</span>
+<span class="fc" id="L43">        activityMapper.insert(activity);</span>
+<span class="fc" id="L44">        return Result.success(activity);</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
     public Result&lt;Activity&gt; update(@PathVariable Long id, @RequestBody Activity body) {
-<span class="nc" id="L49">        Activity a = activityMapper.selectById(id);</span>
-<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (body.getTitle() != null) a.setTitle(body.getTitle());</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (body.getDescription() != null) a.setDescription(body.getDescription());</span>
-<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (body.getLocation() != null) a.setLocation(body.getLocation());</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (body.getStartTime() != null) a.setStartTime(body.getStartTime());</span>
-<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (body.getEndTime() != null) a.setEndTime(body.getEndTime());</span>
-<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (body.getRequiredCount() != null) a.setRequiredCount(body.getRequiredCount());</span>
-<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (body.getPointsReward() != null) a.setPointsReward(body.getPointsReward());</span>
-<span class="nc" id="L58">        activityMapper.updateById(a);</span>
-<span class="nc" id="L59">        return Result.success(a);</span>
+<span class="fc" id="L49">        Activity a = activityMapper.selectById(id);</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (body.getTitle() != null) a.setTitle(body.getTitle());</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (body.getDescription() != null) a.setDescription(body.getDescription());</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (body.getLocation() != null) a.setLocation(body.getLocation());</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (body.getStartTime() != null) a.setStartTime(body.getStartTime());</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if (body.getEndTime() != null) a.setEndTime(body.getEndTime());</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (body.getRequiredCount() != null) a.setRequiredCount(body.getRequiredCount());</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (body.getPointsReward() != null) a.setPointsReward(body.getPointsReward());</span>
+<span class="fc" id="L58">        activityMapper.updateById(a);</span>
+<span class="fc" id="L59">        return Result.success(a);</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
     public Result&lt;Map&lt;String, Object&gt;&gt; detail(@PathVariable Long id) {
-<span class="nc" id="L64">        Activity a = activityMapper.selectById(id);</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
-<span class="nc" id="L66">        Map&lt;String, Object&gt; data = objToMap(a);</span>
+<span class="fc" id="L64">        Activity a = activityMapper.selectById(id);</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
+<span class="fc" id="L66">        Map&lt;String, Object&gt; data = objToMap(a);</span>
 
-<span class="nc" id="L68">        List&lt;ActivityParticipant&gt; parts = participantMapper.selectList(</span>
-<span class="nc" id="L69">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id));</span>
-<span class="nc" id="L70">        List&lt;Map&lt;String, Object&gt;&gt; participants = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        for (ActivityParticipant p : parts) {</span>
+<span class="fc" id="L68">        List&lt;ActivityParticipant&gt; parts = participantMapper.selectList(</span>
+<span class="fc" id="L69">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id));</span>
+<span class="fc" id="L70">        List&lt;Map&lt;String, Object&gt;&gt; participants = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        for (ActivityParticipant p : parts) {</span>
 <span class="nc" id="L72">            User u = userMapper.selectById(p.getUserId());</span>
 <span class="nc" id="L73">            Map&lt;String, Object&gt; pm = new HashMap&lt;&gt;();</span>
 <span class="nc" id="L74">            pm.put(&quot;id&quot;, p.getId());</span>
@@ -83,92 +83,92 @@ import java.util.stream.Collectors;
             }
 <span class="nc" id="L84">            participants.add(pm);</span>
 <span class="nc" id="L85">        }</span>
-<span class="nc" id="L86">        data.put(&quot;participants&quot;, participants);</span>
-<span class="nc" id="L87">        return Result.success(data);</span>
+<span class="fc" id="L86">        data.put(&quot;participants&quot;, participants);</span>
+<span class="fc" id="L87">        return Result.success(data);</span>
     }
 
     @PutMapping(&quot;/{id}/end&quot;)
     public Result&lt;String&gt; endActivity(@PathVariable Long id) {
-<span class="nc" id="L92">        Activity a = activityMapper.selectById(id);</span>
-<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
-<span class="nc" id="L94">        a.setStatus(2);</span>
-<span class="nc" id="L95">        activityMapper.updateById(a);</span>
-<span class="nc" id="L96">        return Result.success(&quot;活动已结束&quot;);</span>
+<span class="fc" id="L92">        Activity a = activityMapper.selectById(id);</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
+<span class="fc" id="L94">        a.setStatus(2);</span>
+<span class="fc" id="L95">        activityMapper.updateById(a);</span>
+<span class="fc" id="L96">        return Result.success(&quot;活动已结束&quot;);</span>
     }
 
     @PostMapping(&quot;/{id}/approve/{userId}&quot;)
     public Result&lt;String&gt; approveParticipant(@PathVariable Long id, @PathVariable Long userId) {
-<span class="nc" id="L101">        Activity a = activityMapper.selectById(id);</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
-<span class="nc" id="L103">        long approved = participantMapper.selectCount(</span>
-<span class="nc" id="L104">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;status&quot;, 1));</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (approved &gt;= a.getRequiredCount()) return Result.error(&quot;名额已满&quot;);</span>
+<span class="fc" id="L101">        Activity a = activityMapper.selectById(id);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (a == null) return Result.error(&quot;活动不存在&quot;);</span>
+<span class="fc" id="L103">        long approved = participantMapper.selectCount(</span>
+<span class="fc" id="L104">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;status&quot;, 1));</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (approved &gt;= a.getRequiredCount()) return Result.error(&quot;名额已满&quot;);</span>
 
-<span class="nc" id="L107">        ActivityParticipant p = participantMapper.selectOne(</span>
-<span class="nc" id="L108">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
-<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (p == null) return Result.error(&quot;未找到报名记录&quot;);</span>
-<span class="nc" id="L110">        p.setStatus(1);</span>
-<span class="nc" id="L111">        participantMapper.updateById(p);</span>
-<span class="nc" id="L112">        return Result.success(&quot;已入选&quot;);</span>
+<span class="fc" id="L107">        ActivityParticipant p = participantMapper.selectOne(</span>
+<span class="fc" id="L108">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (p == null) return Result.error(&quot;未找到报名记录&quot;);</span>
+<span class="fc" id="L110">        p.setStatus(1);</span>
+<span class="fc" id="L111">        participantMapper.updateById(p);</span>
+<span class="fc" id="L112">        return Result.success(&quot;已入选&quot;);</span>
     }
 
     @PostMapping(&quot;/{id}/reject/{userId}&quot;)
     public Result&lt;String&gt; rejectParticipant(@PathVariable Long id, @PathVariable Long userId) {
-<span class="nc" id="L117">        ActivityParticipant p = participantMapper.selectOne(</span>
-<span class="nc" id="L118">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (p == null) return Result.error(&quot;未找到报名记录&quot;);</span>
-<span class="nc" id="L120">        p.setStatus(3);</span>
-<span class="nc" id="L121">        participantMapper.updateById(p);</span>
-<span class="nc" id="L122">        return Result.success(&quot;已拒绝&quot;);</span>
+<span class="fc" id="L117">        ActivityParticipant p = participantMapper.selectOne(</span>
+<span class="fc" id="L118">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if (p == null) return Result.error(&quot;未找到报名记录&quot;);</span>
+<span class="fc" id="L120">        p.setStatus(3);</span>
+<span class="fc" id="L121">        participantMapper.updateById(p);</span>
+<span class="fc" id="L122">        return Result.success(&quot;已拒绝&quot;);</span>
     }
 
     @PostMapping(&quot;/{id}/reward/{userId}&quot;)
     public Result&lt;String&gt; rewardParticipant(@PathVariable Long id, @PathVariable Long userId) {
-<span class="nc" id="L127">        Activity a = activityMapper.selectById(id);</span>
-<span class="nc" id="L128">        ActivityParticipant p = participantMapper.selectOne(</span>
-<span class="nc" id="L129">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
-<span class="nc bnc" id="L130" title="All 4 branches missed.">        if (p == null || p.getStatus() != 1) return Result.error(&quot;该参与者未入选&quot;);</span>
+<span class="fc" id="L127">        Activity a = activityMapper.selectById(id);</span>
+<span class="fc" id="L128">        ActivityParticipant p = participantMapper.selectOne(</span>
+<span class="fc" id="L129">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">        if (p == null || p.getStatus() != 1) return Result.error(&quot;该参与者未入选&quot;);</span>
 
-<span class="nc" id="L132">        User u = userMapper.selectById(userId);</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (u != null) {</span>
-<span class="nc" id="L134">            u.setPoints(u.getPoints() + a.getPointsReward());</span>
-<span class="nc" id="L135">            u.setCreditScore(u.getCreditScore() + 1);</span>
-<span class="nc" id="L136">            userMapper.updateById(u);</span>
+<span class="fc" id="L132">        User u = userMapper.selectById(userId);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (u != null) {</span>
+<span class="fc" id="L134">            u.setPoints(u.getPoints() + a.getPointsReward());</span>
+<span class="fc" id="L135">            u.setCreditScore(u.getCreditScore() + 1);</span>
+<span class="fc" id="L136">            userMapper.updateById(u);</span>
         }
-<span class="nc" id="L138">        p.setStatus(2);</span>
-<span class="nc" id="L139">        participantMapper.updateById(p);</span>
+<span class="fc" id="L138">        p.setStatus(2);</span>
+<span class="fc" id="L139">        participantMapper.updateById(p);</span>
 
-<span class="nc" id="L141">        PointsLog log = new PointsLog();</span>
-<span class="nc" id="L142">        log.setUserId(userId);</span>
-<span class="nc" id="L143">        log.setAmount(a.getPointsReward());</span>
-<span class="nc" id="L144">        log.setType(&quot;活动奖励&quot;);</span>
-<span class="nc" id="L145">        log.setDescription(&quot;参与活动'&quot; + a.getTitle() + &quot;'获得积分&quot;);</span>
-<span class="nc" id="L146">        log.setCreatedAt(LocalDateTime.now());</span>
-<span class="nc" id="L147">        pointsLogMapper.insert(log);</span>
+<span class="fc" id="L141">        PointsLog log = new PointsLog();</span>
+<span class="fc" id="L142">        log.setUserId(userId);</span>
+<span class="fc" id="L143">        log.setAmount(a.getPointsReward());</span>
+<span class="fc" id="L144">        log.setType(&quot;活动奖励&quot;);</span>
+<span class="fc" id="L145">        log.setDescription(&quot;参与活动'&quot; + a.getTitle() + &quot;'获得积分&quot;);</span>
+<span class="fc" id="L146">        log.setCreatedAt(LocalDateTime.now());</span>
+<span class="fc" id="L147">        pointsLogMapper.insert(log);</span>
 
-<span class="nc" id="L149">        return Result.success(&quot;积分已发放&quot;);</span>
+<span class="fc" id="L149">        return Result.success(&quot;积分已发放&quot;);</span>
     }
 
     @DeleteMapping(&quot;/{id}/participants/{userId}&quot;)
     public Result&lt;String&gt; removeParticipant(@PathVariable Long id, @PathVariable Long userId) {
-<span class="nc" id="L154">        participantMapper.delete(</span>
-<span class="nc" id="L155">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
-<span class="nc" id="L156">        return Result.success(&quot;已剔除&quot;);</span>
+<span class="fc" id="L154">        participantMapper.delete(</span>
+<span class="fc" id="L155">                new QueryWrapper&lt;ActivityParticipant&gt;().eq(&quot;activity_id&quot;, id).eq(&quot;user_id&quot;, userId));</span>
+<span class="fc" id="L156">        return Result.success(&quot;已剔除&quot;);</span>
     }
 
     private Map&lt;String, Object&gt; objToMap(Activity a) {
-<span class="nc" id="L160">        Map&lt;String, Object&gt; m = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L161">        m.put(&quot;id&quot;, a.getId());</span>
-<span class="nc" id="L162">        m.put(&quot;title&quot;, a.getTitle());</span>
-<span class="nc" id="L163">        m.put(&quot;description&quot;, a.getDescription());</span>
-<span class="nc" id="L164">        m.put(&quot;location&quot;, a.getLocation());</span>
-<span class="nc" id="L165">        m.put(&quot;startTime&quot;, a.getStartTime());</span>
-<span class="nc" id="L166">        m.put(&quot;endTime&quot;, a.getEndTime());</span>
-<span class="nc" id="L167">        m.put(&quot;requiredCount&quot;, a.getRequiredCount());</span>
-<span class="nc" id="L168">        m.put(&quot;pointsReward&quot;, a.getPointsReward());</span>
-<span class="nc" id="L169">        m.put(&quot;status&quot;, a.getStatus());</span>
-<span class="nc" id="L170">        m.put(&quot;createdAt&quot;, a.getCreatedAt());</span>
-<span class="nc" id="L171">        return m;</span>
+<span class="fc" id="L160">        Map&lt;String, Object&gt; m = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L161">        m.put(&quot;id&quot;, a.getId());</span>
+<span class="fc" id="L162">        m.put(&quot;title&quot;, a.getTitle());</span>
+<span class="fc" id="L163">        m.put(&quot;description&quot;, a.getDescription());</span>
+<span class="fc" id="L164">        m.put(&quot;location&quot;, a.getLocation());</span>
+<span class="fc" id="L165">        m.put(&quot;startTime&quot;, a.getStartTime());</span>
+<span class="fc" id="L166">        m.put(&quot;endTime&quot;, a.getEndTime());</span>
+<span class="fc" id="L167">        m.put(&quot;requiredCount&quot;, a.getRequiredCount());</span>
+<span class="fc" id="L168">        m.put(&quot;pointsReward&quot;, a.getPointsReward());</span>
+<span class="fc" id="L169">        m.put(&quot;status&quot;, a.getStatus());</span>
+<span class="fc" id="L170">        m.put(&quot;createdAt&quot;, a.getCreatedAt());</span>
+<span class="fc" id="L171">        return m;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

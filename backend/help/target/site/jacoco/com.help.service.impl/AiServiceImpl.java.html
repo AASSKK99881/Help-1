@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-<span class="nc" id="L21">public class AiServiceImpl implements AiService {</span>
+<span class="fc" id="L21">public class AiServiceImpl implements AiService {</span>
 
     @Value(&quot;${ai.api-key}&quot;)
     private String apiKey;
@@ -37,12 +37,12 @@ import java.util.stream.Collectors;
 
     @Override
     public Map&lt;String, Object&gt; reviewTaskContent(String title, String description, List&lt;String&gt; extraKeywords) {
-<span class="nc" id="L40">        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L40">        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();</span>
 
-<span class="nc bnc" id="L42" title="All 4 branches missed.">        if (apiKey == null || apiKey.isEmpty()) {</span>
-<span class="nc" id="L43">            result.put(&quot;passed&quot;, true);</span>
-<span class="nc" id="L44">            result.put(&quot;reason&quot;, &quot;AI未配置，默认通过&quot;);</span>
-<span class="nc" id="L45">            return result;</span>
+<span class="pc bpc" id="L42" title="1 of 4 branches missed.">        if (apiKey == null || apiKey.isEmpty()) {</span>
+<span class="fc" id="L43">            result.put(&quot;passed&quot;, true);</span>
+<span class="fc" id="L44">            result.put(&quot;reason&quot;, &quot;AI未配置，默认通过&quot;);</span>
+<span class="fc" id="L45">            return result;</span>
         }
 
         // 从数据库读取敏感词
