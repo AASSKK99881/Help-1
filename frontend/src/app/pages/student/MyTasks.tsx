@@ -82,6 +82,16 @@ export function MyTasks() {
     }
   };
 
+  const handleAbandon = async (task: Task) => {
+    try {
+      await tasksApi.abandonTask(task.id);
+      toast.success('已放弃接单，任务已重新开放');
+      loadTasks();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || '操作失败');
+    }
+  };
+
   const TaskCard = ({ task, type }: { task: Task; type: 'published' | 'accepted' }) => {
     const status = statusMap[task.status] || statusMap[0];
     const StatusIcon = status.icon;
@@ -147,10 +157,16 @@ export function MyTasks() {
               )}
 
               {type === 'accepted' && task.status === 2 && (
-                <Button size="sm" className="bg-[#165DFF] hover:bg-[#0E4FD4]"
-                  onClick={() => toast.info('请联系发布者确认完成')}>
-                  标记完成
-                </Button>
+                <>
+                  <Button size="sm" className="bg-[#165DFF] hover:bg-[#0E4FD4]"
+                    onClick={() => toast.info('请联系发布者确认完成')}>
+                    标记完成
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700"
+                    onClick={() => handleAbandon(task)}>
+                    放弃接单
+                  </Button>
+                </>
               )}
             </div>
           </div>

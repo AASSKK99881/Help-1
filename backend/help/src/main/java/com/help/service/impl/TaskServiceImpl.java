@@ -141,6 +141,34 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void abandonTask(Long taskId, Long userId) {
+        Task task = taskMapper.selectById(taskId);
+        if (task == null) {
+            throw new RuntimeException("任务不存在");
+        }
+        if (task.getStatus() != 2) {
+            throw new RuntimeException("只有进行中的任务可以放弃");
+        }
+        if (!task.getAcceptorId().equals(userId)) {
+            throw new RuntimeException("只有接取者可以放弃任务");
+        }
+
+        task.setStatus(1);        // 回到待接单
+        task.setAcceptorId(null);
+        taskMapper.updateById(task);
+
+        PointsLog abandonLog = new PointsLog();
+        abandonLog.setUserId(userId);
+        abandonLog.setTaskId(taskId);
+        abandonLog.setAmount(0);
+        abandonLog.setType("放弃接单");
+        abandonLog.setDescription("放弃接单，任务重新开放");
+        abandonLog.setCreatedAt(LocalDateTime.now());
+        pointsLogMapper.insert(abandonLog);
+    }
+
+    @Override
     public List<Task> getPublishedTasks(Long userId) {
         QueryWrapper<Task> wrapper = new QueryWrapper<>();
         wrapper.eq("publisher_id", userId).orderByDesc("created_at");

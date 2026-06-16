@@ -32,8 +32,8 @@ import java.util.Map;
             @RequestParam(required = false) String category) {
 
 <span class="fc" id="L34">        QueryWrapper&lt;Task&gt; wrapper = new QueryWrapper&lt;&gt;();</span>
-        // 只展示已审核通过且未取消的任务
-<span class="fc" id="L36">        wrapper.ge(&quot;status&quot;, 1).ne(&quot;status&quot;, 4);</span>
+        // 只展示待接单的任务（进行中/已完成仅在&quot;我的委托&quot;中可见）
+<span class="fc" id="L36">        wrapper.eq(&quot;status&quot;, 1);</span>
 
 <span class="pc bpc" id="L38" title="3 of 4 branches missed.">        if (keyword != null &amp;&amp; !keyword.isBlank()) {</span>
 <span class="nc" id="L39">            wrapper.and(w -&gt; w.like(&quot;title&quot;, keyword).or().like(&quot;description&quot;, keyword));</span>
@@ -154,6 +154,17 @@ import java.util.Map;
 <span class="nc" id="L154">            return Result.success(&quot;任务已取消&quot;);</span>
 <span class="nc" id="L155">        } catch (Exception e) {</span>
 <span class="nc" id="L156">            return Result.error(e.getMessage());</span>
+        }
+    }
+
+    @PostMapping(&quot;/{id}/abandon&quot;)
+    public Result&lt;String&gt; abandonTask(@PathVariable Long id, HttpServletRequest request) {
+        try {
+<span class="nc" id="L163">            Long userId = (Long) request.getAttribute(&quot;userId&quot;);</span>
+<span class="nc" id="L164">            taskService.abandonTask(id, userId);</span>
+<span class="nc" id="L165">            return Result.success(&quot;已放弃接单，任务已重新开放&quot;);</span>
+<span class="nc" id="L166">        } catch (Exception e) {</span>
+<span class="nc" id="L167">            return Result.error(e.getMessage());</span>
         }
     }
 }

@@ -9,6 +9,7 @@ public interface TaskService extends IService<Task> {
     void acceptTask(Long taskId, Long studentId);
     void completeTask(Long taskId);
     void cancelTask(Long taskId, Long userId);
+    void abandonTask(Long taskId, Long userId);
     List<Task> getPublishedTasks(Long userId);
     List<Task> getAcceptedTasks(Long userId);
     void approveTask(Long taskId);

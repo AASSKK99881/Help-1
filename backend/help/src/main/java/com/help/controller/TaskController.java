@@ -32,8 +32,8 @@ public class TaskController {
             @RequestParam(required = false) String category) {
 
         QueryWrapper<Task> wrapper = new QueryWrapper<>();
-        // 只展示已审核通过且未取消的任务
-        wrapper.ge("status", 1).ne("status", 4);
+        // 只展示待接单的任务（进行中/已完成仅在"我的委托"中可见）
+        wrapper.eq("status", 1);
 
         if (keyword != null && !keyword.isBlank()) {
             wrapper.and(w -> w.like("title", keyword).or().like("description", keyword));
@@ -152,6 +152,17 @@ public class TaskController {
             Long userId = (Long) request.getAttribute("userId");
             taskService.cancelTask(id, userId);
             return Result.success("任务已取消");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/abandon")
+    public Result<String> abandonTask(@PathVariable Long id, HttpServletRequest request) {
+        try {
+            Long userId = (Long) request.getAttribute("userId");
+            taskService.abandonTask(id, userId);
+            return Result.success("已放弃接单，任务已重新开放");
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }

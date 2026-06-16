@@ -72,5 +72,9 @@ export const tasksApi = {
 
   cancelTask: (id: string | number) => {
     return apiClient.post<{ code: number; data: string }>(`/tasks/${id}/cancel`);
+  },
+
+  abandonTask: (id: string | number) => {
+    return apiClient.post<{ code: number; data: string }>(`/tasks/${id}/abandon`);
   }
 };
