@@ -40,11 +40,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authApi.login({ studentId: email, password: password });
       
       // Axios 拦截器已经剥离了 response.data，这里 response 直接是后端返回的 Result 对象
+      // 先检查后端返回码
+      if (response && response.code !== 0) {
+        throw new Error(response.message || '登录失败');
+      }
+
       if (response && response.data && response.data.user) {
         const realUser = response.data.user;
         const token = response.data.token;
 
-        // 保存 Token 到 localStorage 供后续请求使用
         if (token) {
           localStorage.setItem('token', token);
         }
