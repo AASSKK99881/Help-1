@@ -38,7 +38,7 @@ jobs:
           build-args: |
             VITE_API_URL=http://121.199.22.22:8080/api
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
 
       - name: Scan frontend for vulnerabilities
         uses: aquasecurity/trivy-action@master
@@ -74,7 +74,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.OWNER_LC }}/help-1/backend:latest
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
 
       - name: Scan backend for vulnerabilities
         uses: aquasecurity/trivy-action@master
