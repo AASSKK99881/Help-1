@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Lowercase repo owner
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -31,7 +34,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/${{ github.repository_owner | lower }}/help-1/frontend:latest
+          tags: ghcr.io/${{ env.OWNER_LC }}/help-1/frontend:latest
           build-args: |
             VITE_API_URL=http://121.199.22.22:8080/api
           cache-from: type=gha
@@ -40,7 +43,7 @@ jobs:
       - name: Scan frontend for vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner | lower }}/help-1/frontend:latest
+          image-ref: ghcr.io/${{ env.OWNER_LC }}/help-1/frontend:latest
           severity: CRITICAL,HIGH
 
   build-backend:
@@ -50,6 +53,9 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Lowercase repo owner
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -66,12 +72,12 @@ jobs:
         with:
           context: ./backend/help
           push: true
-          tags: ghcr.io/${{ github.repository_owner | lower }}/help-1/backend:latest
+          tags: ghcr.io/${{ env.OWNER_LC }}/help-1/backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Scan backend for vulnerabilities
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner | lower }}/help-1/backend:latest
+          image-ref: ghcr.io/${{ env.OWNER_LC }}/help-1/backend:latest
           severity: CRITICAL,HIGH
