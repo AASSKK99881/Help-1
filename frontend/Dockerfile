@@ -18,11 +18,10 @@ FROM nginx:1.27-alpine
 # 复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 自定义 nginx 配置：pid 路径可写，非 80 端口
+# 自定义 nginx 配置（含 SPA fallback + API 反向代理）
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN sed -i 's/listen\s*80;/listen 8080;/g' /etc/nginx/conf.d/default.conf \
-    && sed -i 's#root\s*/usr/share/nginx/html;#root /usr/share/nginx/html;\n    try_files $uri $uri/ /index.html;#g' /etc/nginx/conf.d/default.conf \
-    && chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/run /tmp /etc/nginx/conf.d
+RUN rm -f /etc/nginx/conf.d/default.conf \
+    && chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/run /tmp
 
 # 非 root 运行
 USER nginx

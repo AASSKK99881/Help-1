@@ -4,7 +4,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://121.199.22.22:8080/api
+        - VITE_API_URL=/api
     container_name: help-frontend
     ports:
       - "80:8080"
